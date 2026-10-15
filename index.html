@@ -205,48 +205,6 @@ cursor:pointer;
 background:#f0f8ff;
 
 }
-
-/* PASTE BELOW HERE */
-
-.cameraContainer{
-position:relative;
-width:100%;
-}
-
-.banknoteGuide{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-
-width:80%;
-height:40%;
-
-border:3px dashed #00ff00;
-border-radius:10px;
-
-pointer-events:none;
-
-display:none;
-}
-
-.coinGuide{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-
-width:200px;
-height:200px;
-
-border:3px dashed #00ff00;
-border-radius:50%;
-
-pointer-events:none;
-
-display:none;
-}
-
 </style>
 </head>
 <body>
@@ -458,43 +416,16 @@ accept="image/*"
 id="coinFrontFile"
 style="display:none;">
 
-<img id="coinFrontPreview" class="preview">
-
 <button
 type="button"
-onclick="startCoinCamera('front')">
+onclick="document.getElementById('coinFrontFile').click()">
 
 📷 Take Front Photo
 
 </button>
 
-<video
-id="coinFrontCamera"
-autoplay
-playsinline
-style="display:none;width:100%;max-height:300px;">
-</video>
+<img id="coinFrontPreview" class="preview">
 
-<div id="coinFrontGuide"
-style="
-display:none;
-border:3px dashed #00ff00;
-height:120px;
-margin-top:-130px;
-margin-bottom:10px;
-pointer-events:none;
-">
-</div>
-
-<button
-type="button"
-id="coinFrontCaptureBtn"
-style="display:none;"
-onclick="captureCoinPhoto('front')">
-
-Capture Front
-
-</button>
 </div>
 <div class="card">
 
@@ -505,43 +436,15 @@ accept="image/*"
 id="coinBackFile"
 style="display:none;">
 
-<img id="coinBackPreview" class="preview">
-
 <button
 type="button"
-onclick="startCoinCamera('back')">
+onclick="document.getElementById('coinBackFile').click()">
 
 📷 Take Back Photo
-
 </button>
 
-<video
-id="coinBackCamera"
-autoplay
-playsinline
-style="display:none;width:100%;max-height:300px;">
-</video>
+<img id="coinBackPreview" class="preview">
 
-<div id="coinBackGuide"
-style="
-display:none;
-border:3px dashed #00ff00;
-height:120px;
-margin-top:-130px;
-margin-bottom:10px;
-pointer-events:none;
-">
-</div>
-
-<button
-type="button"
-id="coinBackCaptureBtn"
-style="display:none;"
-onclick="captureCoinPhoto('back')">
-
-Capture Back
-
-</button>
 
 </div>
 <div class="loader" id="coinOcrStatus">
@@ -737,8 +640,7 @@ let detectedFaceValue = "";
 let detectedCoinValue = "";
 let coinFrontFile=null;
 let coinBackFile=null;
-let cameraStream = null;
-let captureType = "";
+
 
 function fileToBase64(file){
 
@@ -1639,161 +1541,6 @@ console.error(err);
 
 }
 
-async function startCoinCamera(side){
-
-try{
-
-const stream =
-await navigator.mediaDevices.getUserMedia({
-video:{
-facingMode:"environment"
-}
-});
-
-const video =
-document.getElementById(
-side==="front"
-?
-"coinFrontCamera"
-:
-"coinBackCamera"
-);
-
-video.srcObject = stream;
-
-video.style.display = "block";
-
-document.getElementById(
-side==="front"
-?
-"coinFrontCaptureBtn"
-:
-"coinBackCaptureBtn"
-).style.display = "block";
-
-document.getElementById(
-side==="front"
-?
-"coinFrontGuide"
-:
-"coinBackGuide"
-).style.display = "block";
-
-window.coinStream = stream;
-
-}
-catch(err){
-
-alert(
-"Camera not available"
-);
-
-console.error(err);
-
-}
-
-}
-
-function captureCoinPhoto(side){
-
-const video =
-document.getElementById(
-side==="front"
-?
-"coinFrontCamera"
-:
-"coinBackCamera"
-);
-
-const canvas =
-document.getElementById(
-"cameraCanvas"
-);
-
-canvas.width =
-video.videoWidth;
-
-canvas.height =
-video.videoHeight;
-
-const ctx =
-canvas.getContext("2d");
-
-ctx.drawImage(
-video,
-0,
-0
-);
-
-canvas.toBlob(blob=>{
-
-const file =
-new File(
-[blob],
-side+".jpg",
-{
-type:"image/jpeg"
-}
-);
-
-if(side==="front"){
-
-coinFrontFile =
-file;
-
-preview(
-file,
-"coinFrontPreview"
-);
-
-}else{
-
-coinBackFile =
-file;
-
-preview(
-file,
-"coinBackPreview"
-);
-
-}
-
-runCoinOCR();
-
-});
-
-if(window.coinStream){
-
-window.coinStream
-.getTracks()
-.forEach(
-t=>t.stop()
-);
-
-}
-
-video.style.display =
-"none";
-
-document.getElementById(
-side==="front"
-?
-"coinFrontCaptureBtn"
-:
-"coinBackCaptureBtn"
-).style.display =
-"none";
-
-document.getElementById(
-side==="front"
-?
-"coinFrontGuide"
-:
-"coinBackGuide"
-).style.display =
-"none";
-
-}
 
 function showPage(page){
 
@@ -3025,44 +2772,5 @@ alert(
 id="cameraCanvas"
 style="display:none;">
 </canvas>
-
-<div id="cameraModal" style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-z-index:9999;
-">
-
-<video
-id="cameraVideo"
-autoplay
-playsinline
-style="
-width:100%;
-height:100%;
-object-fit:cover;
-">
-</video>
-
-<div id="captureGuide"></div>
-
-<button
-onclick="capturePhoto()"
-style="
-position:absolute;
-bottom:30px;
-left:50%;
-transform:translateX(-50%);
-width:150px;
-">
-📸 Capture
-</button>
-
-</div>
-
 </body>
 </html>
