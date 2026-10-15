@@ -374,9 +374,14 @@ placeholder="Example: 100, 50">
 
 
 <button onclick="saveRecord()">
-Save Record
+💾 Save Record
 </button>
 
+<br><br>
+
+<button onclick="refreshBanknoteForm()">
+🔄 Refresh
+</button>
 <br><br>
 
 
@@ -537,6 +542,13 @@ Save Record
 
 <br><br>
 
+<button onclick="refreshCoinForm()">
+🔄 Refresh
+</button>
+<br><br>
+
+
+
 <button onclick="goHome()">
 ⬅ Back
 </button>
@@ -596,7 +608,14 @@ margin-top:10px;
 0 Records
 </div>
 
+
 </div>
+
+<button onclick="refreshRecordsPage()">
+🔄 Refresh Records
+</button>
+<br><br>
+
 <button onclick="goHome()">
 ⬅ Back
 </button>
@@ -1304,7 +1323,135 @@ yearMatch[1];
 
 }
 
+function refreshBanknoteForm(){
 
+frontFile = null;
+backFile = null;
+
+document.getElementById(
+"country"
+).value = "";
+
+document.getElementById(
+"currency"
+).value = "";
+
+document.getElementById(
+"facevalue"
+).value = "";
+
+document.getElementById(
+"serial"
+).value = "";
+
+document.getElementById(
+"remarks"
+).value = "";
+
+document.getElementById(
+"condition"
+).selectedIndex = 0;
+
+document.getElementById(
+"frontFile"
+).value = "";
+
+document.getElementById(
+"backFile"
+).value = "";
+
+document.getElementById(
+"frontPreview"
+).src = "";
+
+document.getElementById(
+"frontPreview"
+).style.display = "none";
+
+document.getElementById(
+"backPreview"
+).src = "";
+
+document.getElementById(
+"backPreview"
+).style.display = "none";
+
+}
+
+function refreshCoinForm(){
+
+coinFrontFile = null;
+coinBackFile = null;
+
+document.getElementById(
+"coinCountry"
+).value = "";
+
+document.getElementById(
+"coinCurrency"
+).value = "";
+
+document.getElementById(
+"coinValue"
+).value = "";
+
+document.getElementById(
+"coinYear"
+).value = "";
+
+document.getElementById(
+"coinRemarks"
+).value = "";
+
+document.getElementById(
+"coinCondition"
+).selectedIndex = 0;
+
+document.getElementById(
+"coinFrontFile"
+).value = "";
+
+document.getElementById(
+"coinBackFile"
+).value = "";
+
+document.getElementById(
+"coinFrontPreview"
+).src = "";
+
+document.getElementById(
+"coinFrontPreview"
+).style.display = "none";
+
+document.getElementById(
+"coinBackPreview"
+).src = "";
+
+document.getElementById(
+"coinBackPreview"
+).style.display = "none";
+
+}
+
+function refreshRecordsPage(){
+
+document.getElementById(
+"recordList"
+).innerHTML = "";
+
+document.getElementById(
+"banknoteCount"
+).innerHTML =
+"0 Records";
+
+document.getElementById(
+"coinCount"
+).innerHTML =
+"0 Records";
+
+loadRecordCounts();
+
+}
 
 
 function goHome(){
