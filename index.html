@@ -106,38 +106,34 @@ color:green;
 
 .loader{
 display:none;
-font-size:14px;
+font-size:18px;
+font-weight:bold;
 color:red;
-margin-top:5px;
+margin:10px 0;
+padding:10px;
+background:#fff3cd;
+border:1px solid #ffc107;
+border-radius:8px;
 }
 
+
 .menuCard{
-
 border:2px solid #ddd;
-
 border-radius:15px;
-
 padding:25px;
-
 margin:20px;
-
 cursor:pointer;
-
 text-align:center;
-
 background:white;
-
 transition:0.3s;
-
 }
 
 .menuCard:hover{
-
 background:#f0f8ff;
-
 transform:scale(1.03);
-
 }
+
+
 .helpIcon{
 display:inline-block;
 width:20px;
@@ -192,6 +188,11 @@ z-index:1000;
 
 }
 
+
+.pageContent{
+max-width:500px;
+margin:auto;
+}
 .countryItem{
 
 padding:10px;
@@ -241,11 +242,9 @@ background:#f0f8ff;
 
 
 <div id="banknotePage" style="display:none;">
+<div class="pageContent">
 
-
-
-
-<h2>Banknote Collection</h2>
+<h2>💵 Banknote Collection</h2>
 
 <div class="card">
 
@@ -253,27 +252,15 @@ background:#f0f8ff;
 
 <div class="dropzone" id="frontDrop">
 Drop Front Photo Here<br><br>
-<input type="file" accept="image/*" capture="environment" id="frontFile">
-</div>
+<input type="file"
+accept="image/*"
+id="frontFile"></div>
 
 <img id="frontPreview" class="preview">
-<button type="button" onclick="startCamera('front')">
-📷 Take Front Photo
-</button>
+<button type="button"
+onclick="document.getElementById('frontFile').click()">
 
-<video id="frontCamera"
-autoplay
-playsinline
-style="display:none;width:100%;max-height:300px;">
-</video>
-
-<button
-type="button"
-id="frontCaptureBtn"
-style="display:none;"
-onclick="capturePhoto('front')">
-
-Capture Front
+📷 Add Front Photo
 
 </button>
 </div>
@@ -284,27 +271,16 @@ Capture Front
 
 <div class="dropzone" id="backDrop">
 Drop Back Photo Here<br><br>
-<input type="file" accept="image/*" capture="environment" id="backFile">
-</div>
+
+<input type="file"
+accept="image/*"
+id="backFile"></div>
 
 <img id="backPreview" class="preview">
-<button type="button" onclick="startCamera('back')">
-📷 Take Back Photo
-</button>
+<button type="button"
+onclick="document.getElementById('backFile').click()">
 
-<video id="backCamera"
-autoplay
-playsinline
-style="display:none;width:100%;max-height:300px;">
-</video>
-
-<button
-type="button"
-id="backCaptureBtn"
-style="display:none;"
-onclick="capturePhoto('back')">
-
-Capture Back
+📷 Add Back Photo
 
 </button>
 </div>
@@ -414,72 +390,111 @@ Save Record
 
 </div>
 
+
+<!-- Coin Page -->
 <div id="coinPage" style="display:none;">
 
-<h2>Coin Collection</h2>
+<div style="
+max-width:500px;
+margin:auto;
+">
+<h2>🪙 Coin Collection</h2>
 
 <div class="card">
 
 <h4>Front Photo</h4>
 
 <div class="dropzone" id="coinFrontDrop">
-
 Drop Front Photo Here<br><br>
 
-<input
-type="file"
+
+
+<input type="file"
 accept="image/*"
-capture="environment"
-id="coinFrontFile">
+id="coinFrontFile"></div>
 
+<img id="coinFrontPreview" class="preview">
+
+<button
+type="button"
+onclick="document.getElementById('coinFrontFile').click()">
+
+📷 Add Front Photo
+
+</button>
 </div>
-
-<img
-id="coinFrontPreview"
-class="preview">
-
-</div>
-
 <div class="card">
 
 <h4>Back Photo</h4>
 
 <div class="dropzone" id="coinBackDrop">
-
 Drop Back Photo Here<br><br>
-
-<input
-type="file"
+<input type="file"
 accept="image/*"
-capture="environment"
-id="coinBackFile">
-
+id="coinBackFile"></div>
 </div>
 
-<img
-id="coinBackPreview"
-class="preview">
+<img id="coinBackPreview" class="preview">
+
+<button
+type="button"
+onclick="document.getElementById('coinBackFile').click()">
+
+📷 Add Back Photo
+
+</button>
+
 
 </div>
-
+<div class="loader" id="coinOcrStatus">
+Coin OCR Running...
+</div>
 <h3>Coin Information</h3>
 
-<label>Country</label>
-<input id="coinCountry">
+<label>
 
-<label>Currency</label>
-<input id="coinCurrency">
+Condition
 
-<label>Face Value</label>
-<input id="coinValue">
+<span class="helpIcon">
 
-<label>Year</label>
-<input id="coinYear">
+ⓘ
 
-<label>Condition</label>
+<span class="tooltip">
+
+UNC (Uncirculated)<br>
+Perfect condition. No folds, creases or handling marks.<br><br>
+
+AU (About Uncirculated)<br>
+Nearly perfect. Very slight handling, no major folds.<br><br>
+
+EF / XF (Extremely Fine)<br>
+Light circulation. Small folds or slight wear.<br><br>
+
+VF (Very Fine)<br>
+Moderate circulation. Several folds and slight dirt.<br><br>
+
+F (Fine)<br>
+Heavy circulation. Multiple folds and noticeable wear.<br><br>
+
+VG (Very Good)<br>
+Significant wear, rounded corners, aging visible.<br><br>
+
+G (Good)<br>
+Very worn but complete.<br><br>
+
+Fair<br>
+Damaged, heavy wear, possible tears.<br><br>
+
+Poor<br>
+Severely damaged, missing parts possible.
+
+</span>
+
+</span>
+
+</label>
 
 <select id="coinCondition">
-
 <option>UNC</option>
 <option>AU</option>
 <option>EF</option>
@@ -489,8 +504,32 @@ class="preview">
 <option>G</option>
 <option>Fair</option>
 <option>Poor</option>
-
 </select>
+
+<label>Country</label>
+
+<input
+id="coinCountry"
+placeholder="Type country name..."
+autocomplete="off">
+
+<div id="coinCountrySuggestions"
+class="countrySuggestions">
+</div>
+
+<label>Currency</label>
+
+<input id="coinCurrency" readonly>
+
+<label>Face Value</label>
+
+<input
+id="coinValue"
+placeholder="Example: 50, 20, 5">
+
+<label>Year</label>
+
+<input id="coinYear">
 
 <label>Remarks</label>
 
@@ -506,7 +545,13 @@ Save Coin Record
 ⬅ Back
 </button>
 
+<div class="status" id="coinStatus"></div>
+
 </div>
+</div>
+
+
+
 <!-- RECORD PAGE START -->
 
 <div id="recordPage" style="display:none;">
@@ -554,7 +599,8 @@ const SCRIPT_URL =
 
 let frontFile=null;
 let backFile=null;
-
+let detectedFaceValue = "";
+let detectedCoinValue = "";
 let coinFrontFile=null;
 let coinBackFile=null;
 
@@ -608,39 +654,6 @@ reader.readAsDataURL(file);
 
 document.getElementById(
 "coinFrontFile"
-)?.addEventListener(
-"change",
-e=>{
-
-coinFrontFile =
-e.target.files[0];
-
-preview(
-coinFrontFile,
-"coinFrontPreview"
-);
-
-}
-);
-
-document.getElementById(
-"coinBackFile"
-)?.addEventListener(
-"change",
-e=>{
-
-coinBackFile =
-e.target.files[0];
-
-preview(
-coinBackFile,
-"coinBackPreview"
-);
-
-}
-);
-document.getElementById(
-"coinFrontFile"
 ).addEventListener(
 "change",
 e=>{
@@ -652,6 +665,8 @@ preview(
 coinFrontFile,
 "coinFrontPreview"
 );
+
+runCoinOCR();
 
 }
 );
@@ -670,8 +685,11 @@ coinBackFile,
 "coinBackPreview"
 );
 
+runCoinOCR();
+
 }
 );
+
 async function runOCR(){
 
 if(!frontFile && !backFile) return;
@@ -726,7 +744,9 @@ langPath:
   }
 );
 text += r2.data.text + "\n";
-
+console.log("========== OCR ==========");
+console.log(text);
+console.log("=========================");
 }
 
 detectInformation(text);
@@ -757,6 +777,105 @@ console.error(e);
 document.getElementById("ocrStatus").style.display="none";
 
 }
+
+async function runCoinOCR(){
+
+console.log("Coin OCR Started");
+
+if(!coinFrontFile && !coinBackFile)
+return;
+
+document.getElementById(
+"coinOcrStatus"
+).style.display = "block";
+
+document.getElementById(
+"coinOcrStatus"
+).innerHTML =
+"Running OCR...";
+
+let text = "";
+
+try{
+
+if(coinFrontFile){
+
+const r1 =
+await Tesseract.recognize(
+coinFrontFile,
+"eng",
+{
+logger:m=>console.log(m)
+}
+);
+
+text += r1.data.text + "\n";
+console.log("COIN OCR:");
+console.log(text);
+}
+
+if(coinBackFile){
+
+const r2 =
+await Tesseract.recognize(
+coinBackFile,
+"eng",
+{
+logger:m=>console.log(m)
+}
+);
+text += r2.data.text + "\n";
+console.log(
+"COIN FINAL OCR:"
+);
+
+console.log(text);
+
+console.log("========== OCR ==========");
+console.log(text);
+console.log("=========================");
+}
+
+detectCoinInformation(text);
+
+}
+catch(err){
+
+console.error(err);
+
+}
+
+document.getElementById(
+"coinOcrStatus"
+).innerHTML =
+"OCR Completed";
+
+setTimeout(()=>{
+
+document.getElementById(
+"coinOcrStatus"
+).innerHTML =
+"OCR Completed";
+
+setTimeout(() => {
+
+document.getElementById(
+"coinOcrStatus"
+).style.display = "none";
+
+},1500);
+
+console.log(
+"Coin OCR Finished"
+);
+},1500);
+
+console.log(
+"Coin OCR Finished"
+);
+}
+
+
 async function detectSerialNumber(file){
 
 const img = new Image();
@@ -915,6 +1034,8 @@ bestSerial=serial;
 return bestSerial;
 
 }
+
+
 function detectInformation(text){
 
 const serialMatches =
@@ -954,21 +1075,29 @@ bestSerial;
 }
 const upper=text.toUpperCase();
 
-if(upper.includes("BANK NEGARA")){
-document.getElementById("country").value="Malaysia";
-document.getElementById("currency").value="MYR";
+for(const country in countryCurrencyMap){
+
+if(
+upper.includes(
+country.toUpperCase()
+)
+){
+
+document.getElementById(
+"country"
+).value =
+country;
+
+document.getElementById(
+"currency"
+).value =
+countryCurrencyMap[country];
+
+break;
+
 }
 
-if(upper.includes("SINGAPORE")){
-document.getElementById("country").value="Singapore";
-document.getElementById("currency").value="SGD";
 }
-
-if(upper.includes("UNITED STATES")){
-document.getElementById("country").value="USA";
-document.getElementById("currency").value="USD";
-}
-
 }
 document.getElementById("frontFile")
 .addEventListener("change",e=>{
@@ -1018,23 +1147,88 @@ backFile,
 runOCR();
 
 });
+/* Banknote Drag & Drop */
+
 ["front","back"].forEach(side=>{
 
-const drop=document.getElementById(side+"Drop");
+const drop =
+document.getElementById(
+side + "Drop"
+);
 
-drop.addEventListener("dragover",e=>{
+drop.addEventListener(
+"dragover",
+e=>{
 
 e.preventDefault();
 
-drop.classList.add("drag");
+drop.classList.add(
+"drag"
+);
 
 });
+
+drop.addEventListener(
+"dragleave",
+()=>{
+
+drop.classList.remove(
+"drag"
+);
+
+});
+
+drop.addEventListener(
+"drop",
+e=>{
+
+e.preventDefault();
+
+drop.classList.remove(
+"drag"
+);
+
+const file =
+e.dataTransfer.files[0];
+
+if(!file) return;
+
+if(side==="front"){
+
+frontFile=file;
+
+preview(
+file,
+"frontPreview"
+);
+
+}else{
+
+backFile=file;
+
+preview(
+file,
+"backPreview"
+);
+
+}
+
+runOCR();
+
+});
+
+});
+
+/* Coin Drag & Drop */
+
 ["coinFront","coinBack"].forEach(side=>{
 
 const drop =
 document.getElementById(
 side + "Drop"
 );
+
+if(!drop) return;
 
 drop.addEventListener(
 "dragover",
@@ -1082,7 +1276,7 @@ preview(
 file,
 "coinFrontPreview"
 );
-
+runCoinOCR();
 }else{
 
 coinBackFile =
@@ -1092,73 +1286,235 @@ preview(
 file,
 "coinBackPreview"
 );
-
+runCoinOCR();
 }
 
 });
 
 });
-drop.addEventListener("dragleave",()=>{
 
-drop.classList.remove("drag");
+function detectCoinInformation(text){
 
-});
+const upper = text.toUpperCase();
 
-drop.addEventListener("drop",e=>{
+const coinDatabase = [
 
-e.preventDefault();
+{
+country: "Australia",
+currency: "AUD",
+keywords: [
+"AUSTRALIA",
+"ELIZABETH",
+"DOLLAR",
+"KANGAROO"
+]
+},
 
-drop.classList.remove("drag");
+{
+country: "Malaysia",
+currency: "MYR",
+keywords: [
+"MALAYSIA",
+"NEGARA",
+"SEN",
+"RINGGIT"
+]
+},
 
-const file=e.dataTransfer.files[0];
+{
+country: "Singapore",
+currency: "SGD",
+keywords: [
+"SINGAPORE",
+"CENT",
+"MERLION"
+]
+},
 
-if(!file) return;
+{
+country: "United States",
+currency: "USD",
+keywords: [
+"AMERICA",
+"UNITED",
+"LIBERTY",
+"DOLLAR"
+]
+},
 
-if(side==="front"){
+{
+country: "United Kingdom",
+currency: "GBP",
+keywords: [
+"BRITAIN",
+"ELIZABETH",
+"PENCE",
+"POUND"
+]
+}
 
-frontFile=file;
+];
 
-preview(file,"frontPreview");
+let bestMatch = null;
+let highestScore = 0;
 
-}else{
+for(const coin of coinDatabase){
 
-backFile=file;
+let score = 0;
 
-preview(file,"backPreview");
+for(const keyword of coin.keywords){
+
+if(upper.includes(keyword)){
+
+score++;
 
 }
 
-runOCR();
+}
 
-});
+if(score > highestScore){
 
-});
-async function startCamera(side){
+highestScore = score;
+bestMatch = coin;
+
+}
+
+}
+
+if(bestMatch && highestScore >= 2){
+
+document.getElementById(
+"coinCountry"
+).value =
+bestMatch.country;
+
+document.getElementById(
+"coinCurrency"
+).value =
+bestMatch.currency;
+
+}
+
+/* Detect Value */
+
+const valueMatch =
+upper.match(
+/\b(1|2|5|10|20|50|100)\b/
+);
+
+if(valueMatch){
+
+document.getElementById(
+"coinValue"
+).value =
+valueMatch[1];
+detectedCoinValue =
+valueMatch[1];
+
+}
+
+/* Detect Year */
+
+const yearMatch =
+upper.match(
+/(19\d{2}|20\d{2})/
+);
+
+if(yearMatch){
+
+document.getElementById(
+"coinYear"
+).value =
+yearMatch[1];
+
+}
+
+}
+
+
+function goHome(){
+
+document.getElementById("homePage").style.display="block";
+
+document.getElementById("banknotePage").style.display="none";
+
+document.getElementById("recordPage").style.display="none";
+
+document.getElementById("coinPage").style.display =
+"none";
+
+/* clear record list */
+
+document.getElementById("recordList").innerHTML = "";
+/* clear coin page */
+
+coinFrontFile = null;
+coinBackFile = null;
+
+document.getElementById("coinCountry").value = "";
+
+document.getElementById("coinCurrency").value = "";
+
+document.getElementById("coinValue").value = "";
+
+document.getElementById("coinYear").value = "";
+
+document.getElementById("coinRemarks").value = "";
+
+document.getElementById("coinCondition").selectedIndex = 0;
+
+document.getElementById("coinFrontFile").value = "";
+
+document.getElementById("coinBackFile").value = "";
+
+document.getElementById("coinFrontPreview").src = "";
+
+document.getElementById("coinFrontPreview").style.display = "none";
+
+document.getElementById("coinBackPreview").src = "";
+
+document.getElementById("coinBackPreview").style.display = "none";
+}
+
+async function startCoinCamera(side){
 
 try{
 
-activeStream=
+activeStream =
 await navigator.mediaDevices.getUserMedia({
 video:{
 facingMode:"environment"
 }
 });
 
-const video=
-document.getElementById(side+"Camera");
+const video =
+document.getElementById(
+"coin" +
+side.charAt(0).toUpperCase() +
+side.slice(1) +
+"Camera"
+);
 
-video.srcObject=activeStream;
+video.srcObject =
+activeStream;
 
-video.style.display="block";
+video.style.display =
+"block";
 
 document.getElementById(
-side+"CaptureBtn"
-).style.display="block";
+"coin" +
+side.charAt(0).toUpperCase() +
+side.slice(1) +
+"CaptureBtn"
+).style.display =
+"block";
 
 }
 catch(err){
 
-alert("Camera not available");
+alert(
+"Camera not available"
+);
 
 console.error(err);
 
@@ -1166,106 +1522,6 @@ console.error(err);
 
 }
 
-function capturePhoto(side){
-
-const video=
-document.getElementById(side+"Camera");
-
-const canvas=
-document.getElementById("cameraCanvas");
-
-canvas.width=
-video.videoWidth;
-
-canvas.height=
-video.videoHeight;
-
-const ctx=
-canvas.getContext("2d");
-
-ctx.drawImage(
-video,
-0,
-0,
-canvas.width,
-canvas.height
-);
-
-canvas.toBlob(blob=>{
-
-const file=
-new File(
-[blob],
-side+".jpg",
-{
-type:"image/jpeg"
-}
-);
-
-if(side==="front"){
-
-frontFile=file;
-
-preview(
-frontFile,
-"frontPreview"
-);
-
-}else{
-
-backFile=file;
-
-preview(
-backFile,
-"backPreview"
-);
-
-}
-
-runOCR();
-
-});
-
-if(activeStream){
-
-activeStream.getTracks()
-.forEach(track=>track.stop());
-
-}
-
-video.style.display="none";
-
-document.getElementById(
-side+"CaptureBtn"
-).style.display="none";
-
-}
-function goHome(){
-
-document.getElementById(
-"homePage"
-).style.display="block";
-
-document.getElementById(
-"banknotePage"
-).style.display="none";
-
-document.getElementById(
-"recordPage"
-).style.display="none";
-
-document.getElementById(
-"coinPage"
-).style.display =
-"none";
-
-/* clear record list */
-
-document.getElementById(
-"recordList"
-).innerHTML = "";
-
-}
 function showPage(page){
 
 document.getElementById(
@@ -1345,6 +1601,70 @@ const countries =
 Object.keys(
 countryCurrencyMap
 );
+
+document.getElementById(
+"facevalue"
+)?.addEventListener(
+"focus",
+function(){
+
+this.dataset.oldValue =
+this.value;
+
+this.value = "";
+
+}
+);
+
+document.getElementById(
+"facevalue"
+)?.addEventListener(
+"blur",
+function(){
+
+if(
+this.value.trim()===""
+){
+
+this.value =
+detectedFaceValue;
+
+}
+
+}
+);
+
+document.getElementById(
+"coinValue"
+)?.addEventListener(
+"focus",
+function(){
+
+this.dataset.oldValue =
+this.value;
+
+this.value = "";
+
+}
+);
+
+document.getElementById(
+"coinValue"
+)?.addEventListener(
+"blur",
+function(){
+
+if(
+this.value.trim()===""
+){
+
+this.value =
+detectedCoinValue;
+
+}
+
+}
+);
 const countryInput =
 document.getElementById(
 "country"
@@ -1360,10 +1680,9 @@ countryInput.addEventListener(
 ()=>{
 
 const value =
-countryInput.value
-.toLowerCase();
+countryInput.value.toLowerCase();
 
-suggestionBox.innerHTML="";
+suggestionBox.innerHTML = "";
 
 if(value===""){
 
@@ -1381,21 +1700,21 @@ country.toLowerCase()
 
 matches.forEach(country=>{
 
-const div=
+const div =
 document.createElement("div");
 
-div.className=
+div.className =
 "countryItem";
 
-div.innerText=
+div.innerText =
 country;
 
-div.onclick=()=>{
+div.onclick = ()=>{
 
-countryInput.value=
+countryInput.value =
 country;
 
-suggestionBox.style.display=
+suggestionBox.style.display =
 "none";
 
 document.getElementById(
@@ -1405,19 +1724,93 @@ countryCurrencyMap[country];
 
 };
 
-suggestionBox.appendChild(
-div
-);
+suggestionBox.appendChild(div);
 
 });
 
-suggestionBox.style.display=
+suggestionBox.style.display =
 matches.length
 ? "block"
 : "none";
 
 });
 
+
+/* Coin Country Search */
+
+const coinCountryInput =
+document.getElementById(
+"coinCountry"
+);
+
+const coinSuggestionBox =
+document.getElementById(
+"coinCountrySuggestions"
+);
+
+coinCountryInput?.addEventListener(
+"input",
+()=>{
+
+const value =
+coinCountryInput.value
+.toLowerCase();
+
+coinSuggestionBox.innerHTML="";
+
+if(value===""){
+
+coinSuggestionBox.style.display="none";
+
+return;
+
+}
+
+const matches =
+countries.filter(country=>
+country.toLowerCase()
+.startsWith(value)
+);
+
+matches.forEach(country=>{
+
+const div =
+document.createElement("div");
+
+div.className =
+"countryItem";
+
+div.innerText =
+country;
+
+div.onclick = function(){
+console.log("Selected:", country);
+document.getElementById(
+"coinCountry"
+).value = country;
+
+document.getElementById(
+"coinCurrency"
+).value =
+countryCurrencyMap[country] || "";
+
+coinSuggestionBox.innerHTML = "";
+
+coinSuggestionBox.style.display = "none";
+
+};
+
+
+coinSuggestionBox.appendChild(div);
+
+});
+
+coinSuggestionBox.style.display =
+matches.length
+? "block"
+: "none";
+
+});
 async function loadBanknoteRecords(){
 
 const response =
@@ -1578,6 +1971,57 @@ document.getElementById(
 "recordList"
 ).innerHTML =
 html;
+
+coinFrontFile = null;
+coinBackFile = null;
+
+document.getElementById(
+"coinCountry"
+).value = "";
+
+document.getElementById(
+"coinCurrency"
+).value = "";
+
+document.getElementById(
+"coinValue"
+).value = "";
+
+document.getElementById(
+"coinYear"
+).value = "";
+
+document.getElementById(
+"coinRemarks"
+).value = "";
+
+document.getElementById(
+"coinCondition"
+).selectedIndex = 0;
+
+document.getElementById(
+"coinFrontFile"
+).value = "";
+
+document.getElementById(
+"coinBackFile"
+).value = "";
+
+document.getElementById(
+"coinFrontPreview"
+).src = "";
+
+document.getElementById(
+"coinFrontPreview"
+).style.display = "none";
+
+document.getElementById(
+"coinBackPreview"
+).src = "";
+
+document.getElementById(
+"coinBackPreview"
+).style.display = "none";
 
 }
 async function loadCoinRecords(){
@@ -1777,7 +2221,58 @@ console.log(text);
 alert(
 "Coin Saved Successfully"
 );
+/* clear coin form */
 
+coinFrontFile = null;
+coinBackFile = null;
+
+document.getElementById(
+"coinCountry"
+).value = "";
+
+document.getElementById(
+"coinCurrency"
+).value = "";
+
+document.getElementById(
+"coinValue"
+).value = "";
+
+document.getElementById(
+"coinYear"
+).value = "";
+
+document.getElementById(
+"coinRemarks"
+).value = "";
+
+document.getElementById(
+"coinCondition"
+).selectedIndex = 0;
+
+document.getElementById(
+"coinFrontFile"
+).value = "";
+
+document.getElementById(
+"coinBackFile"
+).value = "";
+
+document.getElementById(
+"coinFrontPreview"
+).src = "";
+
+document.getElementById(
+"coinFrontPreview"
+).style.display = "none";
+
+document.getElementById(
+"coinBackPreview"
+).src = "";
+
+document.getElementById(
+"coinBackPreview"
+).style.display = "none";
 }
 catch(err){
 
