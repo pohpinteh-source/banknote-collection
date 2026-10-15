@@ -212,7 +212,7 @@ background:#f0f8ff;
 <div class="container">
 <div id="homePage">
 
-<h2>Collection Manager</h2>
+<h2>Banknote & Coin Collection</h2>
 
 <div class="menuCard" onclick="showPage('banknote')">
 
@@ -249,40 +249,41 @@ background:#f0f8ff;
 <div class="card">
 
 <h4>Front Photo</h4>
-
-<div class="dropzone" id="frontDrop">
-Drop Front Photo Here<br><br>
-<input type="file"
+<input
+type="file"
 accept="image/*"
-id="frontFile"></div>
+id="frontFile"
+style="display:none;">
 
-<img id="frontPreview" class="preview">
-<button type="button"
+<button
+type="button"
 onclick="document.getElementById('frontFile').click()">
 
-📷 Add Front Photo
+📷 Take Front Photo
 
 </button>
+
+<img id="frontPreview" class="preview">
 </div>
 
 <div class="card">
 
 <h4>Back Photo</h4>
-
-<div class="dropzone" id="backDrop">
-Drop Back Photo Here<br><br>
-
-<input type="file"
+<input
+type="file"
 accept="image/*"
-id="backFile"></div>
+id="backFile"
+style="display:none;">
 
-<img id="backPreview" class="preview">
-<button type="button"
+<button
+type="button"
 onclick="document.getElementById('backFile').click()">
 
-📷 Add Back Photo
+📷 Take Back Photo
 
 </button>
+
+<img id="backPreview" class="preview">
 </div>
 
 <div class="loader" id="ocrStatus">
@@ -404,45 +405,40 @@ margin:auto;
 
 <h4>Front Photo</h4>
 
-<div class="dropzone" id="coinFrontDrop">
-Drop Front Photo Here<br><br>
-
-
-
-<input type="file"
+<input
+type="file"
 accept="image/*"
-id="coinFrontFile"></div>
-
-<img id="coinFrontPreview" class="preview">
+id="coinFrontFile"
+style="display:none;">
 
 <button
 type="button"
 onclick="document.getElementById('coinFrontFile').click()">
 
-📷 Add Front Photo
+📷 Take Front Photo
 
 </button>
+
+<img id="coinFrontPreview" class="preview">
+
 </div>
 <div class="card">
 
 <h4>Back Photo</h4>
-
-<div class="dropzone" id="coinBackDrop">
-Drop Back Photo Here<br><br>
-<input type="file"
+<input
+type="file"
 accept="image/*"
-id="coinBackFile"></div>
-</div>
-
-<img id="coinBackPreview" class="preview">
+id="coinBackFile"
+style="display:none;">
 
 <button
 type="button"
 onclick="document.getElementById('coinBackFile').click()">
 
-📷 Add Back Photo
-
+📷 Take Back Photo
 </button>
+
+<img id="coinBackPreview" class="preview">
 
 
 </div>
@@ -536,7 +532,7 @@ placeholder="Example: 50, 20, 5">
 <textarea id="coinRemarks"></textarea>
 
 <button onclick="saveCoinRecord()">
-Save Coin Record
+Save Record
 </button>
 
 <br><br>
@@ -567,6 +563,17 @@ onclick="loadBanknoteRecords()">
 
 <h3>Banknote Records</h3>
 
+<div
+id="banknoteCount"
+style="
+font-size:18px;
+font-weight:bold;
+color:#0078d7;
+margin-top:10px;
+">
+0 Records
+</div>
+
 </div>
 
 <div class="menuCard"
@@ -577,6 +584,17 @@ onclick="loadCoinRecords()">
 </div>
 
 <h3>Coin Records</h3>
+
+<div
+id="coinCount"
+style="
+font-size:18px;
+font-weight:bold;
+color:#0078d7;
+margin-top:10px;
+">
+0 Records
+</div>
 
 </div>
 <button onclick="goHome()">
@@ -604,7 +622,6 @@ let detectedCoinValue = "";
 let coinFrontFile=null;
 let coinBackFile=null;
 
-let activeStream=null;
 
 function fileToBase64(file){
 
@@ -1147,151 +1164,7 @@ backFile,
 runOCR();
 
 });
-/* Banknote Drag & Drop */
 
-["front","back"].forEach(side=>{
-
-const drop =
-document.getElementById(
-side + "Drop"
-);
-
-drop.addEventListener(
-"dragover",
-e=>{
-
-e.preventDefault();
-
-drop.classList.add(
-"drag"
-);
-
-});
-
-drop.addEventListener(
-"dragleave",
-()=>{
-
-drop.classList.remove(
-"drag"
-);
-
-});
-
-drop.addEventListener(
-"drop",
-e=>{
-
-e.preventDefault();
-
-drop.classList.remove(
-"drag"
-);
-
-const file =
-e.dataTransfer.files[0];
-
-if(!file) return;
-
-if(side==="front"){
-
-frontFile=file;
-
-preview(
-file,
-"frontPreview"
-);
-
-}else{
-
-backFile=file;
-
-preview(
-file,
-"backPreview"
-);
-
-}
-
-runOCR();
-
-});
-
-});
-
-/* Coin Drag & Drop */
-
-["coinFront","coinBack"].forEach(side=>{
-
-const drop =
-document.getElementById(
-side + "Drop"
-);
-
-if(!drop) return;
-
-drop.addEventListener(
-"dragover",
-e=>{
-
-e.preventDefault();
-
-drop.classList.add(
-"drag"
-);
-
-});
-
-drop.addEventListener(
-"dragleave",
-()=>{
-
-drop.classList.remove(
-"drag"
-);
-
-});
-
-drop.addEventListener(
-"drop",
-e=>{
-
-e.preventDefault();
-
-drop.classList.remove(
-"drag"
-);
-
-const file =
-e.dataTransfer.files[0];
-
-if(!file) return;
-
-if(side==="coinFront"){
-
-coinFrontFile =
-file;
-
-preview(
-file,
-"coinFrontPreview"
-);
-runCoinOCR();
-}else{
-
-coinBackFile =
-file;
-
-preview(
-file,
-"coinBackPreview"
-);
-runCoinOCR();
-}
-
-});
-
-});
 
 function detectCoinInformation(text){
 
@@ -1432,6 +1305,8 @@ yearMatch[1];
 }
 
 
+
+
 function goHome(){
 
 document.getElementById("homePage").style.display="block";
@@ -1476,51 +1351,49 @@ document.getElementById("coinBackPreview").src = "";
 document.getElementById("coinBackPreview").style.display = "none";
 }
 
-async function startCoinCamera(side){
+async function loadRecordCounts(){
 
 try{
 
-activeStream =
-await navigator.mediaDevices.getUserMedia({
-video:{
-facingMode:"environment"
-}
-});
-
-const video =
-document.getElementById(
-"coin" +
-side.charAt(0).toUpperCase() +
-side.slice(1) +
-"Camera"
+const bnResponse =
+await fetch(
+SCRIPT_URL +
+"?action=list&type=Banknote"
 );
 
-video.srcObject =
-activeStream;
-
-video.style.display =
-"block";
+const bnData =
+await bnResponse.json();
 
 document.getElementById(
-"coin" +
-side.charAt(0).toUpperCase() +
-side.slice(1) +
-"CaptureBtn"
-).style.display =
-"block";
+"banknoteCount"
+).innerHTML =
+"📖 Total: " +
+bnData.rows.length;
 
+
+const coinResponse =
+await fetch(
+SCRIPT_URL +
+"?action=list&type=Coin"
+);
+
+const coinData =
+await coinResponse.json();
+
+document.getElementById(
+"coinCount"
+).innerHTML =
+"📖 Total: " +
+coinData.rows.length;
 }
 catch(err){
-
-alert(
-"Camera not available"
-);
 
 console.error(err);
 
 }
 
 }
+
 
 function showPage(page){
 
@@ -1549,10 +1422,63 @@ document.getElementById(
 }
 if(page==="records"){
 
+const password =
+prompt(
+"Enter Password"
+);
+
+if(password === null){
+
+document.getElementById(
+"homePage"
+).style.display =
+"block";
+
+return;
+
+}
+
+fetch(
+SCRIPT_URL,
+{
+method:"POST",
+body:JSON.stringify({
+
+action:
+"verifyPassword",
+
+password:
+password
+
+})
+}
+)
+.then(r=>r.json())
+.then(result=>{
+
+if(!result.success){
+
+alert(
+"Incorrect Password"
+);
+
+document.getElementById(
+"homePage"
+).style.display =
+"block";
+
+return;
+
+}
+
 document.getElementById(
 "recordPage"
 ).style.display =
 "block";
+
+loadRecordCounts();
+
+});
 
 }
 }
@@ -2024,13 +1950,166 @@ document.getElementById(
 ).style.display = "none";
 
 }
+
 async function loadCoinRecords(){
 
-alert(
-"Coin Records Coming Soon"
+const response =
+await fetch(
+SCRIPT_URL +
+"?action=list&type=Coin"
 );
 
+const data =
+await response.json();
+
+let html = `
+
+<table
+style="
+width:100%;
+border-collapse:collapse;
+text-align:center;
+font-size:14px;
+border:1px solid #ccc;
+background:white;
+">
+
+<tr>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+ID
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Country
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Currency
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Value
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Year
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Condition
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Action
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Remark
+</th>
+
+</tr>
+
+`;
+
+data.rows.forEach(row=>{
+
+html += `
+
+<tr>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[0]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[1]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[2]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[3]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[4]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[5]}
+</td>
+
+<td
+style="
+border:1px solid #ccc;
+padding:8px;
+white-space:nowrap;
+">
+
+<button
+title="View"
+style="
+width:auto;
+padding:6px 10px;
+margin:2px;
+background:#28a745;
+"
+onclick="viewRecord(
+'${row[11]}',
+'${row[12]}'
+)">
+👁
+</button>
+
+<button
+title="Edit"
+style="
+width:auto;
+padding:6px 10px;
+margin:2px;
+background:#ffc107;
+color:black;
+">
+✏
+</button>
+
+<button
+title="Delete"
+style="
+width:auto;
+padding:6px 10px;
+margin:2px;
+background:#dc3545;
+"
+onclick="deleteCoinRecord(
+'${row[0]}'
+)">
+🗑
+</button>
+
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[6] || "-"}
+</td>
+
+</tr>
+
+`;
+
+});
+
+html += "</table>";
+
+document.getElementById(
+"recordList"
+).innerHTML = html;
+
 }
+
 function viewRecord(
 frontUrl,
 backUrl
@@ -2117,25 +2196,91 @@ alert(
 }
 
 }
+async function deleteCoinRecord(id){
 
+if(
+!confirm(
+"Delete " + id + " ?"
+)
+){
+return;
+}
+
+try{
+
+const response =
+await fetch(
+SCRIPT_URL,
+{
+method:"POST",
+body:JSON.stringify({
+
+action:"delete",
+
+type:"Coin",
+
+id:id
+
+})
+}
+);
+
+const result =
+await response.json();
+
+if(result.success){
+
+alert(
+id +
+" deleted successfully"
+);
+
+loadCoinRecords();
+
+}else{
+
+alert(
+"Delete failed"
+);
+
+}
+
+}
+catch(err){
+
+console.error(err);
+
+alert(
+"Delete failed"
+);
+
+}
+
+}
 async function saveCoinRecord(){
 
 try{
 
+const compressedFront =
+coinFrontFile
+? await compressImage(coinFrontFile)
+: null;
+
 const frontBase64 =
-coinFrontFile
-? await fileToBase64(
-coinFrontFile
-)
+compressedFront
+? await fileToBase64(compressedFront)
 : "";
+
+
+const compressedBack =
+coinBackFile
+? await compressImage(coinBackFile)
+: null;
 
 const backBase64 =
-coinBackFile
-? await fileToBase64(
-coinBackFile
-)
+compressedBack
+? await fileToBase64(compressedBack)
 : "";
-
 const data = {
 
 action:"save",
@@ -2295,16 +2440,26 @@ document.getElementById(
 ).innerHTML =
 "Saving...";
 
-const frontBase64 =
+const compressedFront =
 frontFile
-? await fileToBase64(frontFile)
+? await compressImage(frontFile)
+: null;
+
+const frontBase64 =
+compressedFront
+? await fileToBase64(compressedFront)
 : "";
+
+
+const compressedBack =
+backFile
+? await compressImage(backFile)
+: null;
 
 const backBase64 =
-backFile
-? await fileToBase64(backFile)
+compressedBack
+? await fileToBase64(compressedBack)
 : "";
-
 console.log(
 "Front Length:",
 frontBase64.length
