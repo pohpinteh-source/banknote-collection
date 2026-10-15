@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Banknote Collection</title>
+
+<script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
+
+
+<script>
+console.log("Tesseract Loaded:", typeof Tesseract);
+</script>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f4f4f4;
+margin:0;
+padding:15px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+h2{
+margin-top:0;
+text-align:center;
+}
+
+.card{
+border:2px dashed #ccc;
+padding:10px;
+margin-bottom:10px;
+border-radius:10px;
+text-align:center;
+}
+
+
+.dropzone{
+
+    border:2px dashed #999;
+    border-radius:12px;
+    background:#fafafa;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    min-height:80px;
+    padding:10px;
+}
+
+.dropzone.drag{
+background:#dff0ff;
+border-color:#0078d7;
+}
+
+.preview{
+width:100%;
+max-height:250px;
+object-fit:contain;
+margin-top:10px;
+display:none;
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:12px;
+box-sizing:border-box;
+}
+input[type=file]{
+    width:auto;
+    display:block;
+    margin:15px auto;
+}
+button{
+background:#0078d7;
+color:#fff;
+border:none;
+padding:12px;
+border-radius:8px;
+cursor:pointer;
+width:100%;
+font-size:16px;
+}
+
+button:hover{
+background:#005fa3;
+}
+
+.status{
+margin-top:10px;
+font-weight:bold;
+color:green;
+}
+
+.loader{
+display:none;
+font-size:14px;
+color:red;
+margin-top:5px;
+}
+
+.menuCard{
+
+border:2px solid #ddd;
+
+border-radius:15px;
+
+padding:25px;
+
+margin:20px;
+
+cursor:pointer;
+
+text-align:center;
+
+background:white;
+
+transition:0.3s;
+
+}
+
+.menuCard:hover{
+
+background:#f0f8ff;
+
+transform:scale(1.03);
+
+}
+.helpIcon{
+display:inline-block;
+width:20px;
+height:20px;
+line-height:20px;
+text-align:center;
+border-radius:50%;
+background:#0078d7;
+color:white;
+font-size:12px;
+font-weight:bold;
+cursor:pointer;
+position:relative;
+margin-left:8px;
+}
+
+.tooltip{
+display:none;
+position:absolute;
+left:30px;
+top:0;
+width:350px;
+background:white;
+border:1px solid #ccc;
+border-radius:10px;
+padding:12px;
+box-shadow:0 2px 15px rgba(0,0,0,.2);
+color:black;
+font-size:12px;
+line-height:1.5;
+z-index:9999;
+text-align:left;
+}
+
+.helpIcon:hover .tooltip{
+display:block;
+}
+.countrySuggestions{
+
+border:1px solid #ccc;
+border-top:none;
+
+max-height:200px;
+overflow-y:auto;
+
+background:white;
+
+display:none;
+
+position:relative;
+z-index:1000;
+
+}
+
+.countryItem{
+
+padding:10px;
+cursor:pointer;
+
+}
+
+.countryItem:hover{
+
+background:#f0f8ff;
+
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div id="homePage">
+
+<h2>Collection Manager</h2>
+
+<div class="menuCard" onclick="showPage('banknote')">
+
+<div style="font-size:80px">💵</div>
+
+<h2>Add Banknote</h2>
+
+</div>
+
+<div class="menuCard" onclick="showPage('coin')">
+
+<div style="font-size:80px">🪙</div>
+
+<h2>Add Coin</h2>
+
+</div>
+
+<div class="menuCard" onclick="showPage('records')">
+
+<div style="font-size:80px">📚</div>
+
+<h2>Records</h2>
+
+</div>
+
+</div>
+
+
+<div id="banknotePage" style="display:none;">
+
+
+
+
+<h2>Banknote Collection</h2>
+
+<div class="card">
+
+<h4>Front Photo</h4>
+
+<div class="dropzone" id="frontDrop">
+Drop Front Photo Here<br><br>
+<input type="file" accept="image/*" capture="environment" id="frontFile">
+</div>
+
+<img id="frontPreview" class="preview">
+<button type="button" onclick="startCamera('front')">
+📷 Take Front Photo
+</button>
+
+<video id="frontCamera"
+autoplay
+playsinline
+style="display:none;width:100%;max-height:300px;">
+</video>
+
+<button
+type="button"
+id="frontCaptureBtn"
+style="display:none;"
+onclick="capturePhoto('front')">
+
+Capture Front
+
+</button>
+</div>
+
+<div class="card">
+
+<h4>Back Photo</h4>
+
+<div class="dropzone" id="backDrop">
+Drop Back Photo Here<br><br>
+<input type="file" accept="image/*" capture="environment" id="backFile">
+</div>
+
+<img id="backPreview" class="preview">
+<button type="button" onclick="startCamera('back')">
+📷 Take Back Photo
+</button>
+
+<video id="backCamera"
+autoplay
+playsinline
+style="display:none;width:100%;max-height:300px;">
+</video>
+
+<button
+type="button"
+id="backCaptureBtn"
+style="display:none;"
+onclick="capturePhoto('back')">
+
+Capture Back
+
+</button>
+</div>
+
+<div class="loader" id="ocrStatus">
+Running OCR...
+</div>
+
+<h3>Banknote Information</h3>
+<label>
+
+Condition
+
+<span class="helpIcon">
+
+ⓘ
+
+<span class="tooltip">
+
+UNC (Uncirculated)<br>
+Perfect condition. No folds, creases or handling marks.<br><br>
+
+AU (About Uncirculated)<br>
+Nearly perfect. Very slight handling, no major folds.<br><br>
+
+EF / XF (Extremely Fine)<br>
+Light circulation. Small folds or slight wear.<br><br>
+
+VF (Very Fine)<br>
+Moderate circulation. Several folds and slight dirt.<br><br>
+
+F (Fine)<br>
+Heavy circulation. Multiple folds and noticeable wear.<br><br>
+
+VG (Very Good)<br>
+Significant wear, rounded corners, aging visible.<br><br>
+
+G (Good)<br>
+Very worn but complete.<br><br>
+
+Fair<br>
+Damaged, heavy wear, possible tears.<br><br>
+
+Poor<br>
+Severely damaged, missing parts possible.
+</span>
+
+</span>
+
+</label>
+
+<select id="condition">
+<option>UNC</option>
+<option>AU</option>
+<option>EF</option>
+<option>VF</option>
+<option>F</option>
+<option>VG</option>
+<option>G</option>
+<option>Fair</option>
+<option>Poor</option>
+</select>
+
+<label>Country</label>
+
+<input
+id="country"
+placeholder="Type country name..."
+autocomplete="off">
+
+<div id="countrySuggestions"
+class="countrySuggestions">
+</div>
+
+<label>Currency</label>
+<input id="currency" readonly>
+
+<label>Face Value</label>
+<input
+id="facevalue"
+placeholder="Example: 100, 50">
+
+
+<label>Serial Number</label>
+<input id="serial">
+
+
+<label>Remarks</label>
+<textarea id="remarks"></textarea>
+
+
+<button onclick="saveRecord()">
+Save Record
+</button>
+
+<br><br>
+
+
+<button onclick="goHome()">
+⬅ Back
+</button>
+
+
+<div class="status" id="status"></div>
+
+</div>
+
+</div>
+
+<div id="coinPage" style="display:none;">
+
+<h2>Coin Collection</h2>
+
+<div class="card">
+
+<h4>Front Photo</h4>
+
+<div class="dropzone" id="coinFrontDrop">
+
+Drop Front Photo Here<br><br>
+
+<input
+type="file"
+accept="image/*"
+capture="environment"
+id="coinFrontFile">
+
+</div>
+
+<img
+id="coinFrontPreview"
+class="preview">
+
+</div>
+
+<div class="card">
+
+<h4>Back Photo</h4>
+
+<div class="dropzone" id="coinBackDrop">
+
+Drop Back Photo Here<br><br>
+
+<input
+type="file"
+accept="image/*"
+capture="environment"
+id="coinBackFile">
+
+</div>
+
+<img
+id="coinBackPreview"
+class="preview">
+
+</div>
+
+<h3>Coin Information</h3>
+
+<label>Country</label>
+<input id="coinCountry">
+
+<label>Currency</label>
+<input id="coinCurrency">
+
+<label>Face Value</label>
+<input id="coinValue">
+
+<label>Year</label>
+<input id="coinYear">
+
+<label>Condition</label>
+
+<select id="coinCondition">
+
+<option>UNC</option>
+<option>AU</option>
+<option>EF</option>
+<option>VF</option>
+<option>F</option>
+<option>VG</option>
+<option>G</option>
+<option>Fair</option>
+<option>Poor</option>
+
+</select>
+
+<label>Remarks</label>
+
+<textarea id="coinRemarks"></textarea>
+
+<button onclick="saveCoinRecord()">
+Save Coin Record
+</button>
+
+<br><br>
+
+<button onclick="goHome()">
+⬅ Back
+</button>
+
+</div>
+<!-- RECORD PAGE START -->
+
+<div id="recordPage" style="display:none;">
+
+<h2>Record Management</h2>
+
+<div class="menuCard"
+onclick="loadBanknoteRecords()">
+
+<div style="font-size:70px">
+💵
+</div>
+
+<h3>Banknote Records</h3>
+
+</div>
+
+<div class="menuCard"
+onclick="loadCoinRecords()">
+
+<div style="font-size:70px">
+🪙
+</div>
+
+<h3>Coin Records</h3>
+
+</div>
+<button onclick="goHome()">
+⬅ Back
+</button>
+<br><br>
+
+
+<div id="recordList"></div>
+
+
+
+</div>
+
+<!-- RECORD PAGE END -->
+
+<script>
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzSJVGjsBDyI9Wju8UK7tiTxq5YnAj1YRpQFLWsyCWdI1jPgXTZSO30B6kgox-OvoRJ6Q/exec";
+
+let frontFile=null;
+let backFile=null;
+
+let coinFrontFile=null;
+let coinBackFile=null;
+
+let activeStream=null;
+
+function fileToBase64(file){
+
+return new Promise(
+
+(resolve,reject)=>{
+
+const reader =
+new FileReader();
+
+reader.onload = ()=>{
+
+const base64 =
+reader.result.split(",")[1];
+
+resolve(base64);
+
+};
+
+reader.onerror =
+reject;
+
+reader.readAsDataURL(
+file
+);
+
+}
+
+);
+
+}
+
+
+function preview(file,imgId){
+
+const reader=new FileReader();
+
+reader.onload=e=>{
+const img=document.getElementById(imgId);
+img.src=e.target.result;
+img.style.display="block";
+};
+
+reader.readAsDataURL(file);
+
+}
+
+document.getElementById(
+"coinFrontFile"
+)?.addEventListener(
+"change",
+e=>{
+
+coinFrontFile =
+e.target.files[0];
+
+preview(
+coinFrontFile,
+"coinFrontPreview"
+);
+
+}
+);
+
+document.getElementById(
+"coinBackFile"
+)?.addEventListener(
+"change",
+e=>{
+
+coinBackFile =
+e.target.files[0];
+
+preview(
+coinBackFile,
+"coinBackPreview"
+);
+
+}
+);
+document.getElementById(
+"coinFrontFile"
+).addEventListener(
+"change",
+e=>{
+
+coinFrontFile =
+e.target.files[0];
+
+preview(
+coinFrontFile,
+"coinFrontPreview"
+);
+
+}
+);
+
+document.getElementById(
+"coinBackFile"
+).addEventListener(
+"change",
+e=>{
+
+coinBackFile =
+e.target.files[0];
+
+preview(
+coinBackFile,
+"coinBackPreview"
+);
+
+}
+);
+async function runOCR(){
+
+if(!frontFile && !backFile) return;
+
+document.getElementById("ocrStatus").style.display="block";
+
+let text="";
+
+try{
+
+if(frontFile){
+
+const r1 = await Tesseract.recognize(
+frontFile,
+"eng",
+{
+logger:m=>console.log(m),
+
+workerPath:
+"https://unpkg.com/tesseract.js@5/dist/worker.min.js",
+corePath:
+"https://unpkg.com/tesseract.js-core@5/tesseract-core.wasm.js",
+
+langPath:
+"https://tessdata.projectnaptha.com/4.0.0"
+}
+);
+console.log(
+"FRONT OCR:",
+r1.data.text
+);
+text += r1.data.text + "\n";
+
+}
+
+if(backFile){
+
+const r2 = await Tesseract.recognize(
+  backFile,
+  "eng",
+  {
+    logger: m => console.log(m),
+
+workerPath:
+"https://unpkg.com/tesseract.js@5/dist/worker.min.js",
+corePath:
+"https://unpkg.com/tesseract.js-core@5/tesseract-core.wasm.js",
+
+langPath:
+"https://tessdata.projectnaptha.com/4.0.0"
+
+  }
+);
+text += r2.data.text + "\n";
+
+}
+
+detectInformation(text);
+
+if(frontFile){
+
+const serial =
+await detectSerialNumber(
+frontFile
+);
+
+if(serial){
+
+document.getElementById(
+"serial"
+).value =
+serial;
+
+}
+
+}
+
+}
+catch(e){
+
+console.error(e);
+}
+document.getElementById("ocrStatus").style.display="none";
+
+}
+async function detectSerialNumber(file){
+
+const img = new Image();
+
+img.src = URL.createObjectURL(file);
+
+await new Promise(resolve=>{
+img.onload = resolve;
+});
+
+const canvas =
+document.getElementById(
+"cameraCanvas"
+);
+
+const ctx =
+canvas.getContext("2d");
+
+canvas.width = img.width;
+canvas.height = img.height;
+
+ctx.drawImage(img,0,0);
+
+const zones = [
+
+/* left vertical serial */
+{
+x:0,
+y:0,
+w:img.width*0.18,
+h:img.height
+},
+
+/* top center serial */
+{
+x:img.width*0.20,
+y:0,
+w:img.width*0.60,
+h:img.height*0.25
+},
+
+/* bottom right serial */
+{
+x:img.width*0.70,
+y:img.height*0.65,
+w:img.width*0.30,
+h:img.height*0.35
+}
+
+];
+
+const votes = {};
+
+for(const z of zones){
+const c =
+document.createElement("canvas");
+
+const cx =
+c.getContext("2d");
+
+c.width = z.w * 3;
+c.height = z.h * 3;
+
+cx.drawImage(
+canvas,
+z.x,
+z.y,
+z.w,
+z.h,
+0,
+0,
+c.width,
+c.height
+);
+
+/* black-white conversion */
+const imgData =
+cx.getImageData(
+0,0,c.width,c.height
+);
+
+for(let i=0;i<imgData.data.length;i+=4){
+
+const gray =
+(
+imgData.data[i]
++
+imgData.data[i+1]
++
+imgData.data[i+2]
+)/3;
+
+const value =
+gray > 150 ? 255 : 0;
+
+imgData.data[i]=value;
+imgData.data[i+1]=value;
+imgData.data[i+2]=value;
+
+}
+
+cx.putImageData(
+imgData,
+0,
+0
+);
+
+const result =
+await Tesseract.recognize(
+  c,
+  "eng",
+  {
+    tessedit_char_whitelist:
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+
+workerPath:
+"https://unpkg.com/tesseract.js@5/dist/worker.min.js",
+corePath:
+"https://unpkg.com/tesseract.js-core@5/tesseract-core.wasm.js",
+
+langPath:
+"https://tessdata.projectnaptha.com/4.0.0"  }
+);
+const matches =
+result.data.text.match(
+/[A-Z]{1,3}[0-9]{5,10}/g
+);
+
+if(matches){
+
+matches.forEach(serial=>{
+
+votes[serial] =
+(votes[serial]||0)+1;
+
+});
+
+}
+
+}
+
+let bestSerial="";
+let bestVote=0;
+
+for(const serial in votes){
+
+if(votes[serial]>bestVote){
+
+bestVote=votes[serial];
+bestSerial=serial;
+
+}
+
+}
+
+return bestSerial;
+
+}
+function detectInformation(text){
+
+const serialMatches =
+text.match(/[A-Z]{1,3}\s*[0-9]{5,12}\s*[A-Z]{0,2}/g);
+
+if(serialMatches){
+
+const votes = {};
+
+serialMatches.forEach(s=>{
+
+const serial =
+s.replace(/\s+/g,"");
+
+votes[serial] =
+(votes[serial] || 0) + 1;
+
+});
+
+let bestSerial = "";
+let bestVote = 0;
+
+for(const serial in votes){
+
+if(votes[serial] > bestVote){
+
+bestVote = votes[serial];
+bestSerial = serial;
+
+}
+
+}
+
+document.getElementById("serial").value =
+bestSerial;
+
+}
+const upper=text.toUpperCase();
+
+if(upper.includes("BANK NEGARA")){
+document.getElementById("country").value="Malaysia";
+document.getElementById("currency").value="MYR";
+}
+
+if(upper.includes("SINGAPORE")){
+document.getElementById("country").value="Singapore";
+document.getElementById("currency").value="SGD";
+}
+
+if(upper.includes("UNITED STATES")){
+document.getElementById("country").value="USA";
+document.getElementById("currency").value="USD";
+}
+
+}
+document.getElementById("frontFile")
+.addEventListener("change",e=>{
+
+frontFile=e.target.files[0];
+
+preview(
+frontFile,
+"frontPreview"
+);
+
+runOCR();
+
+});
+
+document.getElementById("backFile")
+.addEventListener("change",e=>{
+
+document.getElementById("country")
+.addEventListener("input",()=>{
+
+const country =
+document.getElementById(
+"country"
+).value;
+
+const currency =
+countryCurrencyMap[country];
+
+if(currency){
+
+document.getElementById(
+"currency"
+).value =
+currency;
+
+}
+
+});
+backFile=e.target.files[0];
+
+preview(
+backFile,
+"backPreview"
+);
+
+runOCR();
+
+});
+["front","back"].forEach(side=>{
+
+const drop=document.getElementById(side+"Drop");
+
+drop.addEventListener("dragover",e=>{
+
+e.preventDefault();
+
+drop.classList.add("drag");
+
+});
+["coinFront","coinBack"].forEach(side=>{
+
+const drop =
+document.getElementById(
+side + "Drop"
+);
+
+drop.addEventListener(
+"dragover",
+e=>{
+
+e.preventDefault();
+
+drop.classList.add(
+"drag"
+);
+
+});
+
+drop.addEventListener(
+"dragleave",
+()=>{
+
+drop.classList.remove(
+"drag"
+);
+
+});
+
+drop.addEventListener(
+"drop",
+e=>{
+
+e.preventDefault();
+
+drop.classList.remove(
+"drag"
+);
+
+const file =
+e.dataTransfer.files[0];
+
+if(!file) return;
+
+if(side==="coinFront"){
+
+coinFrontFile =
+file;
+
+preview(
+file,
+"coinFrontPreview"
+);
+
+}else{
+
+coinBackFile =
+file;
+
+preview(
+file,
+"coinBackPreview"
+);
+
+}
+
+});
+
+});
+drop.addEventListener("dragleave",()=>{
+
+drop.classList.remove("drag");
+
+});
+
+drop.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+drop.classList.remove("drag");
+
+const file=e.dataTransfer.files[0];
+
+if(!file) return;
+
+if(side==="front"){
+
+frontFile=file;
+
+preview(file,"frontPreview");
+
+}else{
+
+backFile=file;
+
+preview(file,"backPreview");
+
+}
+
+runOCR();
+
+});
+
+});
+async function startCamera(side){
+
+try{
+
+activeStream=
+await navigator.mediaDevices.getUserMedia({
+video:{
+facingMode:"environment"
+}
+});
+
+const video=
+document.getElementById(side+"Camera");
+
+video.srcObject=activeStream;
+
+video.style.display="block";
+
+document.getElementById(
+side+"CaptureBtn"
+).style.display="block";
+
+}
+catch(err){
+
+alert("Camera not available");
+
+console.error(err);
+
+}
+
+}
+
+function capturePhoto(side){
+
+const video=
+document.getElementById(side+"Camera");
+
+const canvas=
+document.getElementById("cameraCanvas");
+
+canvas.width=
+video.videoWidth;
+
+canvas.height=
+video.videoHeight;
+
+const ctx=
+canvas.getContext("2d");
+
+ctx.drawImage(
+video,
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+canvas.toBlob(blob=>{
+
+const file=
+new File(
+[blob],
+side+".jpg",
+{
+type:"image/jpeg"
+}
+);
+
+if(side==="front"){
+
+frontFile=file;
+
+preview(
+frontFile,
+"frontPreview"
+);
+
+}else{
+
+backFile=file;
+
+preview(
+backFile,
+"backPreview"
+);
+
+}
+
+runOCR();
+
+});
+
+if(activeStream){
+
+activeStream.getTracks()
+.forEach(track=>track.stop());
+
+}
+
+video.style.display="none";
+
+document.getElementById(
+side+"CaptureBtn"
+).style.display="none";
+
+}
+function goHome(){
+
+document.getElementById(
+"homePage"
+).style.display="block";
+
+document.getElementById(
+"banknotePage"
+).style.display="none";
+
+document.getElementById(
+"recordPage"
+).style.display="none";
+
+document.getElementById(
+"coinPage"
+).style.display =
+"none";
+
+/* clear record list */
+
+document.getElementById(
+"recordList"
+).innerHTML = "";
+
+}
+function showPage(page){
+
+document.getElementById(
+"homePage"
+).style.display="none";
+
+const banknotePage =
+document.getElementById(
+"banknotePage"
+);
+
+if(page==="banknote"){
+
+banknotePage.style.display="block";
+
+}
+
+if(page==="coin"){
+
+document.getElementById(
+"coinPage"
+).style.display =
+"block";
+
+}
+if(page==="records"){
+
+document.getElementById(
+"recordPage"
+).style.display =
+"block";
+
+}
+}
+const countryCurrencyMap = {
+
+"Malaysia":"MYR",
+"Singapore":"SGD",
+"United States":"USD",
+"United Kingdom":"GBP",
+"Japan":"JPY",
+"China":"CNY",
+"Hong Kong":"HKD",
+"Taiwan":"TWD",
+"Thailand":"THB",
+"Indonesia":"IDR",
+"Vietnam":"VND",
+"Philippines":"PHP",
+"India":"INR",
+"South Korea":"KRW",
+"Brunei":"BND",
+"Australia":"AUD",
+"New Zealand":"NZD",
+"Canada":"CAD",
+"Mexico":"MXN",
+"Brazil":"BRL",
+"Russia":"RUB",
+"Saudi Arabia":"SAR",
+"United Arab Emirates":"AED",
+"Turkey":"TRY",
+"Pakistan":"PKR",
+"Bangladesh":"BDT",
+"Sri Lanka":"LKR",
+"Nepal":"NPR",
+"Myanmar":"MMK",
+"Cambodia":"KHR",
+"Laos":"LAK",
+"South Africa":"ZAR",
+"Switzerland":"CHF",
+"Sweden":"SEK",
+"Norway":"NOK",
+"Denmark":"DKK",
+"European Union":"EUR"
+
+};
+const countries =
+Object.keys(
+countryCurrencyMap
+);
+const countryInput =
+document.getElementById(
+"country"
+);
+
+const suggestionBox =
+document.getElementById(
+"countrySuggestions"
+);
+
+countryInput.addEventListener(
+"input",
+()=>{
+
+const value =
+countryInput.value
+.toLowerCase();
+
+suggestionBox.innerHTML="";
+
+if(value===""){
+
+suggestionBox.style.display="none";
+
+return;
+
+}
+
+const matches =
+countries.filter(country=>
+country.toLowerCase()
+.startsWith(value)
+);
+
+matches.forEach(country=>{
+
+const div=
+document.createElement("div");
+
+div.className=
+"countryItem";
+
+div.innerText=
+country;
+
+div.onclick=()=>{
+
+countryInput.value=
+country;
+
+suggestionBox.style.display=
+"none";
+
+document.getElementById(
+"currency"
+).value =
+countryCurrencyMap[country];
+
+};
+
+suggestionBox.appendChild(
+div
+);
+
+});
+
+suggestionBox.style.display=
+matches.length
+? "block"
+: "none";
+
+});
+
+async function loadBanknoteRecords(){
+
+const response =
+await fetch(
+SCRIPT_URL +
+"?action=list&type=Banknote"
+);
+
+const data =
+await response.json();
+
+let html = `
+
+<table
+style="
+width:100%;
+border-collapse:collapse;
+text-align:center;
+font-size:14px;
+border:1px solid #ccc;
+background:white;
+">
+
+<tr>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+ID
+</th>
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Country
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Currency
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Value
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Serial Number
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Condition
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Action
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Remark
+</th>
+
+
+</tr>
+
+`;
+
+data.rows.forEach(row=>{
+
+html += `
+
+<tr style="border-bottom:1px solid #ccc;">
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[0]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[1]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[2]}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[3] || "-"}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[4] || "-"}
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[5]}
+</td>
+<td style="
+border:1px solid #ccc;
+padding:8px;
+text-align:center;
+white-space:nowrap;
+">
+
+<button
+title="View"
+style="
+width:auto;
+padding:6px 10px;
+margin:2px;
+background:#28a745;
+"
+onclick="viewRecord(
+'${row[11]}',
+'${row[12]}'
+)">
+👁
+</button>
+
+<button
+title="Edit"
+style="
+width:auto;
+padding:6px 10px;
+margin:2px;
+background:#ffc107;
+color:black;
+"
+onclick="editRecord(
+'${row[0]}'
+)">
+✏
+</button>
+
+<button
+title="Delete"
+style="
+width:auto;
+padding:6px 10px;
+margin:2px;
+background:#dc3545;
+"
+onclick="deleteRecordHtml(
+'${row[0]}'
+)">
+🗑
+</button>
+
+</td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[6] || "-"}
+</td>
+
+
+</tr>
+
+`;
+
+});
+
+html += "</table>";
+
+document.getElementById(
+"recordList"
+).innerHTML =
+html;
+
+}
+async function loadCoinRecords(){
+
+alert(
+"Coin Records Coming Soon"
+);
+
+}
+function viewRecord(
+frontUrl,
+backUrl
+){
+
+window.open(
+frontUrl
+);
+
+window.open(
+backUrl
+);
+
+}
+
+function editRecord(id){
+
+alert(
+"Edit Record: " +
+id
+);
+
+}
+
+async function deleteRecordHtml(id){
+
+if(
+!confirm(
+"Delete " + id + " ?"
+)
+){
+return;
+}
+
+try{
+
+const response =
+await fetch(
+SCRIPT_URL,
+{
+method:"POST",
+body:JSON.stringify({
+
+action:"delete",
+
+type:"Banknote",
+
+id:id
+
+})
+}
+);
+
+const result =
+await response.json();
+
+if(result.success){
+
+alert(
+id +
+" deleted successfully"
+);
+
+loadBanknoteRecords();
+
+}
+else{
+
+alert(
+"Delete failed"
+);
+
+}
+
+}
+catch(err){
+
+console.error(err);
+
+alert(
+"Delete failed"
+);
+
+}
+
+}
+
+async function saveCoinRecord(){
+
+try{
+
+const frontBase64 =
+coinFrontFile
+? await fileToBase64(
+coinFrontFile
+)
+: "";
+
+const backBase64 =
+coinBackFile
+? await fileToBase64(
+coinBackFile
+)
+: "";
+
+const data = {
+
+action:"save",
+
+type:"Coin",
+
+country:
+document.getElementById(
+"coinCountry"
+).value,
+
+currency:
+document.getElementById(
+"coinCurrency"
+).value,
+
+faceValue:
+document.getElementById(
+"coinValue"
+).value,
+
+year:
+document.getElementById(
+"coinYear"
+).value,
+
+condition:
+document.getElementById(
+"coinCondition"
+).value,
+
+remarks:
+document.getElementById(
+"coinRemarks"
+).value,
+
+frontImage:
+frontBase64,
+
+backImage:
+backBase64,
+
+frontFileName:
+
+document.getElementById("coinCountry").value +
+"_" +
+document.getElementById("coinValue").value +
+"_" +
+(
+document.getElementById("coinYear").value
+|| "NOYEAR"
+) +
+"_FRONT.jpg",
+
+backFileName:
+
+document.getElementById("coinCountry").value +
+"_" +
+document.getElementById("coinValue").value +
+"_" +
+(
+document.getElementById("coinYear").value
+|| "NOYEAR"
+) +
+"_BACK.jpg"
+
+};
+
+const response =
+await fetch(
+SCRIPT_URL,
+{
+method:"POST",
+body:JSON.stringify(data)
+}
+);
+
+const text =
+await response.text();
+
+console.log(text);
+
+alert(
+"Coin Saved Successfully"
+);
+
+}
+catch(err){
+
+console.error(err);
+
+alert(
+"Coin Save Failed"
+);
+
+}
+
+}
+
+async function saveRecord(){
+
+try{
+
+document.getElementById(
+"status"
+).innerHTML =
+"Saving...";
+
+const frontBase64 =
+frontFile
+? await fileToBase64(frontFile)
+: "";
+
+const backBase64 =
+backFile
+? await fileToBase64(backFile)
+: "";
+
+console.log(
+"Front Length:",
+frontBase64.length
+);
+
+console.log(
+"Back Length:",
+backBase64.length
+);
+
+const data = {
+
+action:"save",
+
+type:"Banknote",
+
+country:
+document.getElementById("country").value,
+
+currency:
+document.getElementById("currency").value,
+
+faceValue:
+document.getElementById("facevalue").value,
+
+serialNumber:
+document.getElementById("serial").value,
+
+condition:
+document.getElementById("condition").value,
+
+remarks:
+document.getElementById("remarks").value,
+
+frontImage:
+frontBase64,
+
+backImage:
+backBase64,
+
+frontFileName:
+
+document.getElementById("country").value +
+"_" +
+document.getElementById("facevalue").value +
+"_" +
+(
+document.getElementById("serial").value
+|| "NOSERIAL"
+) +
+"_FRONT.jpg",
+
+backFileName:
+
+document.getElementById("country").value +
+"_" +
+document.getElementById("facevalue").value +
+"_" +
+(
+document.getElementById("serial").value
+|| "NOSERIAL"
+) +
+"_BACK.jpg"
+
+};
+
+const response =
+await fetch(
+SCRIPT_URL,
+{
+method:"POST",
+body:JSON.stringify(data)
+}
+);
+
+const text =
+await response.text();
+
+console.log(text);
+
+alert(
+"Record Saved Successfully"
+);
+
+document.getElementById(
+"status"
+).innerHTML =
+"Record Saved Successfully";
+
+/* clear form */
+
+document.getElementById(
+"country"
+).value = "";
+
+document.getElementById(
+"currency"
+).value = "";
+
+document.getElementById(
+"facevalue"
+).value = "";
+
+document.getElementById(
+"serial"
+).value = "";
+
+document.getElementById(
+"remarks"
+).value = "";
+
+document.getElementById(
+"condition"
+).selectedIndex = 0;
+
+/* clear image objects */
+
+frontFile = null;
+backFile = null;
+
+/* clear image selectors */
+
+document.getElementById(
+"frontFile"
+).value = "";
+
+document.getElementById(
+"backFile"
+).value = "";
+
+/* clear image previews */
+
+document.getElementById(
+"frontPreview"
+).src = "";
+
+document.getElementById(
+"frontPreview"
+).style.display = "none";
+
+document.getElementById(
+"backPreview"
+).src = "";
+
+document.getElementById(
+"backPreview"
+).style.display = "none";
+}
+catch(err){
+
+console.error(err);
+
+alert(
+"Save Failed"
+);
+
+}
+
+}
+
+</script>
+<canvas
+id="cameraCanvas"
+style="display:none;">
+</canvas>
+</body>
+</html>
