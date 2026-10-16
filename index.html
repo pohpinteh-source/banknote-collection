@@ -361,14 +361,20 @@ class="countrySuggestions">
 <label>Face Value</label>
 <input
 id="facevalue"
-placeholder="Example: 100, 50">
-
+inputmode="numeric"
+pattern="[0-9]*"
+placeholder="Example: 1, 2, 5, 10, 20, 50, 100">
 
 <label>Serial Number</label>
 <input id="serial">
 
 <label>Quantity (pcs)</label>
-<input id="banknoteQty" value="1">
+<input
+id="banknoteQty"
+value="1"
+inputmode="numeric"
+pattern="[0-9]*">
+
 
 <label>Remarks</label>
 <textarea id="remarks"></textarea>
@@ -528,13 +534,26 @@ class="countrySuggestions">
 
 <input
 id="coinValue"
-placeholder="Example: 50, 20, 5">
+inputmode="numeric"
+pattern="[0-9]*"
+placeholder="Example: 1, 2, 5, 10, 20, 50, 100">
+
 
 <label>Year</label>
-<input id="coinYear">
+<input
+id="coinYear"
+inputmode="numeric"
+pattern="[0-9]*">
+
+
 
 <label>Quantity (pcs)</label>
-<input id="coinQty" value="1">
+<input
+id="coinQty"
+value="1"
+inputmode="numeric"
+pattern="[0-9]*">
+
 
 <label>Remarks</label>
 
@@ -2937,6 +2956,80 @@ alert(
 async function saveCoinRecord(){
 
 try{
+
+const country =
+document.getElementById(
+"coinCountry"
+).value.trim();
+
+const currency =
+document.getElementById(
+"coinCurrency"
+).value.trim();
+
+const faceValue =
+document.getElementById(
+"coinValue"
+).value.trim();
+
+const year =
+document.getElementById(
+"coinYear"
+).value.trim();
+
+const qty =
+document.getElementById(
+"coinQty"
+).value.trim();
+
+if(
+!country ||
+!currency ||
+!faceValue ||
+!year ||
+!qty
+){
+
+alert(
+"Please fill in Country, Currency, Face Value, Year and Quantity."
+);
+
+return;
+}
+
+if(
+!/^\d+$/.test(faceValue)
+){
+
+alert(
+"Face Value must contain numbers only."
+);
+
+return;
+}
+
+if(
+!/^\d+$/.test(year)
+){
+
+alert(
+"Year must contain numbers only."
+);
+
+return;
+}
+
+if(
+!/^\d+$/.test(qty)
+){
+
+alert(
+"Quantity must contain numbers only."
+);
+
+return;
+}
+
 document.getElementById(
 "coinStatus"
 ).innerHTML =
@@ -3133,6 +3226,58 @@ alert(
 async function saveRecord(){
 
 try{
+const country =
+document.getElementById("country").value.trim();
+
+const currency =
+document.getElementById("currency").value.trim();
+
+const faceValue =
+document.getElementById("facevalue").value.trim();
+
+const serial =
+document.getElementById("serial").value.trim();
+
+const qty =
+document.getElementById("banknoteQty").value.trim();
+
+if(
+!country ||
+!currency ||
+!faceValue ||
+!serial ||
+!qty
+){
+
+alert(
+"Please fill in Country, Currency, Face Value, Serial Number and Quantity."
+);
+
+return;
+}
+
+if(
+!/^\d+$/.test(faceValue)
+){
+
+alert(
+"Face Value must contain numbers only."
+);
+
+return;
+}
+
+if(
+!/^\d+$/.test(qty)
+){
+
+alert(
+"Quantity must contain numbers only."
+);
+
+return;
+}
+
 
 document.getElementById(
 "status"
