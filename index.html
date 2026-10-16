@@ -334,17 +334,18 @@ Severely damaged, missing parts possible.
 </label>
 
 <select id="condition">
+
 <option>UNC</option>
 <option>AU</option>
 <option>EF</option>
-<option>VF</option>
+<option selected>VF</option>
 <option>F</option>
 <option>VG</option>
 <option>G</option>
 <option>Fair</option>
 <option>Poor</option>
-</select>
 
+</select>
 <label>Country</label>
 
 <input
@@ -368,6 +369,8 @@ placeholder="Example: 100, 50">
 <label>Serial Number</label>
 <input id="serial">
 
+<label>Quantity (pcs)</label>
+<input id="banknoteQty" value="1">
 
 <label>Remarks</label>
 <textarea id="remarks"></textarea>
@@ -496,17 +499,18 @@ Severely damaged, missing parts possible.
 </label>
 
 <select id="coinCondition">
+
 <option>UNC</option>
 <option>AU</option>
 <option>EF</option>
-<option>VF</option>
+<option selected>VF</option>
 <option>F</option>
 <option>VG</option>
 <option>G</option>
 <option>Fair</option>
 <option>Poor</option>
-</select>
 
+</select>
 <label>Country</label>
 
 <input
@@ -529,8 +533,10 @@ id="coinValue"
 placeholder="Example: 50, 20, 5">
 
 <label>Year</label>
-
 <input id="coinYear">
+
+<label>Quantity (pcs)</label>
+<input id="coinQty" value="1">
 
 <label>Remarks</label>
 
@@ -583,7 +589,6 @@ font-weight:bold;
 color:#0078d7;
 margin-top:10px;
 ">
-0 Records
 </div>
 
 </div>
@@ -605,7 +610,6 @@ font-weight:bold;
 color:#0078d7;
 margin-top:10px;
 ">
-0 Records
 </div>
 
 
@@ -638,6 +642,8 @@ let frontFile=null;
 let backFile=null;
 let detectedFaceValue = "";
 let detectedCoinValue = "";
+let defaultBanknoteQty = "1";
+let defaultCoinQty = "1";
 let coinFrontFile=null;
 let coinBackFile=null;
 
@@ -687,6 +693,14 @@ img.style.display="block";
 reader.readAsDataURL(file);
 
 }
+
+async function compressImage(file){
+return file;
+}
+
+document.getElementById(
+"coinFrontFile"
+)
 
 document.getElementById(
 "coinFrontFile"
@@ -1345,12 +1359,17 @@ document.getElementById(
 ).value = "";
 
 document.getElementById(
+"banknoteQty"
+).value = "1";
+
+document.getElementById(
 "remarks"
 ).value = "";
 
 document.getElementById(
 "condition"
-).selectedIndex = 0;
+).value = "VF";
+
 
 document.getElementById(
 "frontFile"
@@ -1376,6 +1395,10 @@ document.getElementById(
 "backPreview"
 ).style.display = "none";
 
+document.getElementById(
+"status"
+).innerHTML = "";
+
 }
 
 function refreshCoinForm(){
@@ -1400,12 +1423,17 @@ document.getElementById(
 ).value = "";
 
 document.getElementById(
+"coinQty"
+).value = "1";
+
+document.getElementById(
 "coinRemarks"
 ).value = "";
 
 document.getElementById(
 "coinCondition"
-).selectedIndex = 0;
+).value = "VF";
+
 
 document.getElementById(
 "coinFrontFile"
@@ -1430,6 +1458,10 @@ document.getElementById(
 document.getElementById(
 "coinBackPreview"
 ).style.display = "none";
+
+document.getElementById(
+"status"
+).innerHTML = "";
 
 }
 
@@ -1468,6 +1500,13 @@ document.getElementById("coinPage").style.display =
 /* clear record list */
 
 document.getElementById("recordList").innerHTML = "";
+document.getElementById(
+"status"
+).innerHTML = "";
+
+document.getElementById(
+"coinStatus"
+).innerHTML = "";
 /* clear coin page */
 
 coinFrontFile = null;
@@ -1483,7 +1522,8 @@ document.getElementById("coinYear").value = "";
 
 document.getElementById("coinRemarks").value = "";
 
-document.getElementById("coinCondition").selectedIndex = 0;
+document.getElementById("coinCondition").value = "VF";
+
 
 document.getElementById("coinFrontFile").value = "";
 
@@ -1738,6 +1778,64 @@ detectedCoinValue;
 
 }
 );
+
+document.getElementById(
+"banknoteQty"
+)?.addEventListener(
+"focus",
+function(){
+
+this.value = "";
+
+}
+);
+
+document.getElementById(
+"banknoteQty"
+)?.addEventListener(
+"blur",
+function(){
+
+if(
+this.value.trim()===""
+){
+
+this.value =
+defaultBanknoteQty;
+
+}
+
+}
+);
+
+document.getElementById(
+"coinQty"
+)?.addEventListener(
+"focus",
+function(){
+
+this.value = "";
+
+}
+);
+
+document.getElementById(
+"coinQty"
+)?.addEventListener(
+"blur",
+function(){
+
+if(
+this.value.trim()===""
+){
+
+this.value =
+defaultCoinQty;
+
+}
+
+}
+);
 const countryInput =
 document.getElementById(
 "country"
@@ -1921,11 +2019,15 @@ Currency
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Value
+Face Value
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
 Serial Number
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Qty (pcs)
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
@@ -1972,8 +2074,13 @@ ${row[4] || "-"}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;text-align:center;">
-${row[5]}
+${row[5] || "1"}
 </td>
+
+<td style="border:1px solid #ccc;padding:8px;text-align:center;">
+${row[6]}
+</td>
+
 <td style="
 border:1px solid #ccc;
 padding:8px;
@@ -1990,8 +2097,8 @@ margin:2px;
 background:#28a745;
 "
 onclick="viewRecord(
-'${row[11]}',
-'${row[12]}'
+'${row[12]}',
+'${row[13]}'
 )">
 👁
 </button>
@@ -2028,7 +2135,7 @@ onclick="deleteRecordHtml(
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;text-align:center;">
-${row[6] || "-"}
+${row[7] || "-"}
 </td>
 
 
@@ -2070,7 +2177,8 @@ document.getElementById(
 
 document.getElementById(
 "coinCondition"
-).selectedIndex = 0;
+).value = "VF";
+
 
 document.getElementById(
 "coinFrontFile"
@@ -2136,11 +2244,15 @@ Currency
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Value
+Face Value
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
 Year
+</th>
+
+<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
+Qty (pcs)
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
@@ -2186,8 +2298,13 @@ ${row[4]}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;">
-${row[5]}
+${row[5] || "1"}
 </td>
+
+<td style="border:1px solid #ccc;padding:8px;">
+${row[6]}
+</td>
+
 
 <td
 style="
@@ -2205,8 +2322,8 @@ margin:2px;
 background:#28a745;
 "
 onclick="viewRecord(
-'${row[11]}',
-'${row[12]}'
+'${row[12]}',
+'${row[13]}'
 )">
 👁
 </button>
@@ -2240,7 +2357,7 @@ onclick="deleteCoinRecord(
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;">
-${row[6] || "-"}
+${row[7] || "-"}
 </td>
 
 </tr>
@@ -2407,7 +2524,10 @@ alert(
 async function saveCoinRecord(){
 
 try{
-
+document.getElementById(
+"coinStatus"
+).innerHTML =
+"Saving...";
 const compressedFront =
 coinFrontFile
 ? await compressImage(coinFrontFile)
@@ -2452,6 +2572,11 @@ document.getElementById(
 year:
 document.getElementById(
 "coinYear"
+).value,
+
+qty:
+document.getElementById(
+"coinQty"
 ).value,
 
 condition:
@@ -2513,6 +2638,21 @@ console.log(text);
 alert(
 "Coin Saved Successfully"
 );
+
+document.getElementById(
+"coinStatus"
+).innerHTML =
+"Record Saved Successfully";
+
+setTimeout(()=>{
+
+document.getElementById(
+"status"
+).innerHTML = "";
+
+},3000);
+
+
 /* clear coin form */
 
 coinFrontFile = null;
@@ -2540,8 +2680,7 @@ document.getElementById(
 
 document.getElementById(
 "coinCondition"
-).selectedIndex = 0;
-
+).value = "VF";
 document.getElementById(
 "coinFrontFile"
 ).value = "";
@@ -2635,6 +2774,11 @@ document.getElementById("facevalue").value,
 serialNumber:
 document.getElementById("serial").value,
 
+qty:
+document.getElementById(
+"banknoteQty"
+).value,
+
 condition:
 document.getElementById("condition").value,
 
@@ -2688,13 +2832,21 @@ await response.text();
 console.log(text);
 
 alert(
-"Record Saved Successfully"
+"Banknote Saved Successfully"
 );
 
 document.getElementById(
 "status"
 ).innerHTML =
 "Record Saved Successfully";
+
+setTimeout(()=>{
+
+document.getElementById(
+"status"
+).innerHTML = "";
+
+},3000);
 
 /* clear form */
 
@@ -2720,7 +2872,8 @@ document.getElementById(
 
 document.getElementById(
 "condition"
-).selectedIndex = 0;
+).value = "VF";
+
 
 /* clear image objects */
 
@@ -2760,7 +2913,7 @@ catch(err){
 console.error(err);
 
 alert(
-"Save Failed"
+"Banknote Save Failed"
 );
 
 }
