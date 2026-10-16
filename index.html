@@ -632,6 +632,19 @@ margin-top:10px;
 
 </div>
 
+<button onclick="openGoogleSheet()">
+📄 Open Google Sheet
+</button>
+
+<br><br>
+
+<button onclick="exportCurrentTableToCSV()">
+📥 Export Records CSV
+</button>
+
+<br><br>
+
+
 <button onclick="refreshRecordsPage()">
 🔄 Refresh Records
 </button>
@@ -654,6 +667,9 @@ margin-top:10px;
 <script>
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbzSJVGjsBDyI9Wju8UK7tiTxq5YnAj1YRpQFLWsyCWdI1jPgXTZSO30B6kgox-OvoRJ6Q/exec";
+
+const SHEET_URL =
+"https://docs.google.com/spreadsheets/d/1octGCmNDBE6kfdXQSRMxPlBERe10wwnnQK_BBLS2IQ0/edit";
 
 let frontFile=null;
 let backFile=null;
@@ -1496,6 +1512,110 @@ document.getElementById(
 "0 Records";
 
 loadRecordCounts();
+
+}
+
+function openGoogleSheet(){
+
+window.open(
+SHEET_URL,
+"_blank"
+);
+
+}
+
+function exportCurrentTableToCSV(){
+
+const table =
+document.querySelector(
+"#recordList table"
+);
+
+if(!table){
+
+alert(
+"Please open Banknote Records or Coin Records first."
+);
+
+return;
+}
+
+let csv = [];
+
+const rows =
+table.querySelectorAll("tr");
+
+rows.forEach(row=>{
+
+const cols =
+row.querySelectorAll(
+"th,td"
+);
+
+let rowData = [];
+
+cols.forEach(col=>{
+
+rowData.push(
+'"' +
+col.innerText.replace(
+/"/g,
+'""'
+) +
+'"'
+);
+
+});
+
+csv.push(
+rowData.join(",")
+);
+
+});
+
+const blob =
+new Blob(
+[csv.join("\n")],
+{
+type:"text/csv"
+}
+);
+
+const link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+const title =
+document.querySelector(
+"#recordList h2"
+)?.innerText || "records";
+
+if(
+title.includes("Banknote")
+){
+
+link.download =
+"banknote_records.csv";
+
+}
+else if(
+title.includes("Coin")
+){
+
+link.download =
+"coin_records.csv";
+
+}
+else{
+
+link.download =
+"records.csv";
+
+}
+
+link.click();
 
 }
 
