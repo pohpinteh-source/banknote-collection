@@ -698,9 +698,6 @@ async function compressImage(file){
 return file;
 }
 
-document.getElementById(
-"coinFrontFile"
-)
 
 document.getElementById(
 "coinFrontFile"
@@ -2111,20 +2108,6 @@ onclick="viewRecord(
 👁
 </button>
 
-<button
-title="Edit"
-style="
-width:auto;
-padding:6px 10px;
-margin:2px;
-background:#ffc107;
-color:black;
-"
-onclick="editRecord(
-'${row[0]}'
-)">
-✏
-</button>
 
 <button
 title="Delete"
@@ -2344,17 +2327,6 @@ onclick="viewRecord(
 👁
 </button>
 
-<button
-title="Edit"
-style="
-width:auto;
-padding:6px 10px;
-margin:2px;
-background:#ffc107;
-color:black;
-">
-✏
-</button>
 
 <button
 title="Delete"
@@ -2405,14 +2377,6 @@ backUrl
 
 }
 
-function editRecord(id){
-
-alert(
-"Edit Record: " +
-id
-);
-
-}
 
 async function deleteRecordHtml(id){
 
