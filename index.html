@@ -2022,16 +2022,9 @@ ID
 Country
 </th>
 
-<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Currency
-</th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
 Face Value
-</th>
-
-<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Serial Number
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
@@ -2044,10 +2037,6 @@ Condition
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
 Action
-</th>
-
-<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Remark
 </th>
 
 
@@ -2070,15 +2059,7 @@ ${row[1]}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;text-align:center;">
-${row[2]}
-</td>
-
-<td style="border:1px solid #ccc;padding:8px;text-align:center;">
 ${row[3] || "-"}
-</td>
-
-<td style="border:1px solid #ccc;padding:8px;text-align:center;">
-${row[4] || "-"}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;text-align:center;">
@@ -2086,8 +2067,9 @@ ${row[5] || "1"}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;text-align:center;">
-${row[6]}
+${row[6] || "-"}
 </td>
+
 
 <td style="
 border:1px solid #ccc;
@@ -2256,15 +2238,7 @@ Country
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Currency
-</th>
-
-<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
 Face Value
-</th>
-
-<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Year
 </th>
 
 <th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
@@ -2279,9 +2253,6 @@ Condition
 Action
 </th>
 
-<th style="border:1px solid #ccc;padding:10px;background:#f2f2f2;">
-Remark
-</th>
 
 </tr>
 
@@ -2302,15 +2273,7 @@ ${row[1]}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;">
-${row[2]}
-</td>
-
-<td style="border:1px solid #ccc;padding:8px;">
-${row[3]}
-</td>
-
-<td style="border:1px solid #ccc;padding:8px;">
-${row[4]}
+${row[3] || "-"}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;">
@@ -2318,9 +2281,8 @@ ${row[5] || "1"}
 </td>
 
 <td style="border:1px solid #ccc;padding:8px;">
-${row[6]}
+${row[6] || "-"}
 </td>
-
 
 <td
 style="
