@@ -44,7 +44,6 @@ text-align:center;
 
 
 .dropzone{
-
     border:2px dashed #999;
     border-radius:12px;
     background:#fafafa;
@@ -187,7 +186,6 @@ position:relative;
 z-index:1000;
 
 }
-
 
 .pageContent{
 max-width:500px;
@@ -1989,6 +1987,8 @@ SCRIPT_URL +
 
 const data =
 await response.json();
+window.banknoteData =
+data.rows;
 
 let html = `
 
@@ -2000,7 +2000,51 @@ margin-bottom:15px;
 💵 Banknote Records
 </h2>
 
+<div style="
+padding:10px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:8px;
+background:#f8f8f8;
+">
+
+<input
+id="banknoteSearch"
+placeholder="Search..."
+style="margin-bottom:10px;"
+onkeyup="filterBanknoteRecords()">
+
+<select id="banknoteCountryFilter"
+onchange="filterBanknoteRecords()">
+
+<option value="">
+All Countries
+</option>
+
+</select>
+
+<select id="banknoteValueFilter"
+onchange="filterBanknoteRecords()">
+
+<option value="">
+All Face Values
+</option>
+
+</select>
+
+<select id="banknoteConditionFilter"
+onchange="filterBanknoteRecords()">
+
+<option value="">
+All Conditions
+</option>
+
+</select>
+
+</div>
+
 <table
+
 style="
 width:100%;
 border-collapse:collapse;
@@ -2142,7 +2186,7 @@ document.getElementById(
 "recordList"
 ).innerHTML =
 html;
-
+populateBanknoteFilters();
 coinFrontFile = null;
 coinBackFile = null;
 
@@ -2207,6 +2251,8 @@ SCRIPT_URL +
 
 const data =
 await response.json();
+window.coinData =
+data.rows;
 
 let html = `
 
@@ -2218,6 +2264,61 @@ margin-bottom:15px;
 🪙 Coin Records
 </h2>
 
+<div style="
+padding:10px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:8px;
+background:#f8f8f8;
+">
+
+<input
+id="coinSearch"
+placeholder="Search..."
+style="margin-bottom:10px;"
+onkeyup="filterCoinRecords()">
+
+<select
+id="coinCountryFilter"
+onchange="filterCoinRecords()">
+
+<option value="">
+All Countries
+</option>
+
+</select>
+
+<select
+id="coinValueFilter"
+onchange="filterCoinRecords()">
+
+<option value="">
+All Face Values
+</option>
+
+</select>
+
+<select
+id="coinYearFilter"
+onchange="filterCoinRecords()">
+
+<option value="">
+All Years
+</option>
+
+</select>
+
+<select
+id="coinConditionFilter"
+onchange="filterCoinRecords()">
+
+<option value="">
+All Conditions
+</option>
+
+</select>
+
+</div>
 <table
 style="
 width:100%;
@@ -2359,8 +2460,340 @@ html += "</table>";
 document.getElementById(
 "recordList"
 ).innerHTML = html;
+populateCoinFilters();
+}
+
+
+
+function populateBanknoteFilters(){
+
+const countries =
+[...new Set(
+window.banknoteData.map(
+r=>r[1]
+)
+)];
+
+const values =
+[...new Set(
+window.banknoteData.map(
+r=>r[3]
+)
+)];
+
+const conditions =
+[...new Set(
+window.banknoteData.map(
+r=>r[6]
+)
+)];
+
+const country =
+document.getElementById(
+"banknoteCountryFilter"
+);
+
+const value =
+document.getElementById(
+"banknoteValueFilter"
+);
+
+const condition =
+document.getElementById(
+"banknoteConditionFilter"
+);
+
+countries.forEach(c=>{
+
+country.innerHTML +=
+`<option value="${c}">
+${c}
+</option>`;
+
+});
+
+values.forEach(v=>{
+
+value.innerHTML +=
+`<option value="${v}">
+${v}
+</option>`;
+
+});
+
+conditions.forEach(c=>{
+
+condition.innerHTML +=
+`<option value="${c}">
+${c}
+</option>`;
+
+});
 
 }
+
+function filterBanknoteRecords(){
+
+const search =
+document.getElementById(
+"banknoteSearch"
+).value.toLowerCase();
+
+const country =
+document.getElementById(
+"banknoteCountryFilter"
+).value;
+
+const faceValue =
+document.getElementById(
+"banknoteValueFilter"
+).value;
+
+const condition =
+document.getElementById(
+"banknoteConditionFilter"
+).value;
+
+const rows =
+document.querySelectorAll(
+"#recordList table tr"
+);
+
+rows.forEach((row,index)=>{
+
+if(index===0)return;
+
+const rowText =
+row.innerText.toLowerCase();
+
+let visible = true;
+
+if(
+search &&
+!rowText.includes(search)
+){
+
+visible = false;
+
+}
+
+if(
+country &&
+!row.innerText.includes(country)
+){
+
+visible = false;
+
+}
+
+if(
+faceValue &&
+!row.innerText.includes(faceValue)
+){
+
+visible = false;
+
+}
+
+if(
+condition &&
+!row.innerText.includes(condition)
+){
+
+visible = false;
+
+}
+
+row.style.display =
+visible ? "" : "none";
+
+});
+
+}
+
+function populateCoinFilters(){
+
+const countries =
+[...new Set(
+window.coinData.map(
+r=>r[1]
+)
+)];
+
+const values =
+[...new Set(
+window.coinData.map(
+r=>r[3]
+)
+)];
+
+const years =
+[...new Set(
+window.coinData.map(
+r=>r[4]
+)
+)];
+
+const conditions =
+[...new Set(
+window.coinData.map(
+r=>r[6]
+)
+)];
+
+const countryBox =
+document.getElementById(
+"coinCountryFilter"
+);
+
+const valueBox =
+document.getElementById(
+"coinValueFilter"
+);
+
+const yearBox =
+document.getElementById(
+"coinYearFilter"
+);
+
+const conditionBox =
+document.getElementById(
+"coinConditionFilter"
+);
+
+countryBox.innerHTML =
+'<option value="">All Countries</option>';
+
+valueBox.innerHTML =
+'<option value="">All Face Values</option>';
+
+yearBox.innerHTML =
+'<option value="">All Years</option>';
+
+conditionBox.innerHTML =
+'<option value="">All Conditions</option>';
+
+countries.forEach(c=>{
+
+countryBox.innerHTML +=
+`<option value="${c}">
+${c}
+</option>`;
+
+});
+
+values.forEach(v=>{
+
+valueBox.innerHTML +=
+`<option value="${v}">
+${v}
+</option>`;
+
+});
+
+years.forEach(y=>{
+
+yearBox.innerHTML +=
+`<option value="${y}">
+${y}
+</option>`;
+
+});
+
+conditions.forEach(c=>{
+
+conditionBox.innerHTML +=
+`<option value="${c}">
+${c}
+</option>`;
+
+});
+
+}
+
+function filterCoinRecords(){
+
+const search =
+document.getElementById(
+"coinSearch"
+).value.toLowerCase();
+
+const country =
+document.getElementById(
+"coinCountryFilter"
+).value;
+
+const value =
+document.getElementById(
+"coinValueFilter"
+).value;
+
+const year =
+document.getElementById(
+"coinYearFilter"
+).value;
+
+const condition =
+document.getElementById(
+"coinConditionFilter"
+).value;
+
+const rows =
+document.querySelectorAll(
+"#recordList table tr"
+);
+
+rows.forEach((row,index)=>{
+
+if(index===0)return;
+
+const rowText =
+row.innerText.toLowerCase();
+
+let visible = true;
+
+if(
+search &&
+!rowText.includes(search)
+){
+visible = false;
+}
+
+if(
+country &&
+!row.innerText.includes(country)
+){
+visible = false;
+}
+
+if(
+value &&
+!row.innerText.includes(value)
+){
+visible = false;
+}
+
+if(
+year &&
+!row.innerText.includes(year)
+){
+visible = false;
+}
+
+if(
+condition &&
+!row.innerText.includes(condition)
+){
+visible = false;
+}
+
+row.style.display =
+visible ? "" : "none";
+
+});
+
+}
+
 
 function viewRecord(
 frontUrl,
